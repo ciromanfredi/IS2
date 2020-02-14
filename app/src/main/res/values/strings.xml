@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">IS2</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confermapassword">Conferma Password</string>
+    <string name="login">Login</string>
+    <string name="lostpsw">Password Dimenticata?</string>
+    <string name="register">Non hai un account? Registrati!</string>
+    <string name="registrati">Registrati</string>
 </resources>
