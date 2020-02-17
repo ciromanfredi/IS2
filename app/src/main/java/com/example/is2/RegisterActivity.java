@@ -44,7 +44,7 @@ public class RegisterActivity extends AppCompatActivity {
         String passwordstr=password.getText().toString();
         String confermapasswordstr=confermapassword.getText().toString();
         if(!confermapasswordstr.equals(passwordstr)){
-            Toast.makeText(this,"La password non corrisponde",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Le password non corrispondono",Toast.LENGTH_SHORT).show();
             return;
         }
         mAuth.createUserWithEmailAndPassword(email, passwordstr)
