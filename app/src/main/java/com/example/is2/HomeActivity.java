@@ -50,11 +50,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //ListView = (ListView) findViewById(R.id.ListView);
+
         final RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        GridLayoutManager glm= new GridLayoutManager(this,10);
+        //GridLayoutManager glm= new GridLayoutManager(this,10);
 
         rv.setLayoutManager(llm);
 
@@ -62,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
         sportEvents = database.getReference("SportEvents");
 
         list = new ArrayList<>();
-
 
         sportEvents.addValueEventListener(new ValueEventListener(){
             @Override
@@ -78,19 +77,15 @@ public class HomeActivity extends AppCompatActivity {
                         System.out.println(sportevent);
                     }
                 }
-
                 RVAdapter adapter = new RVAdapter(list);
                 rv.setAdapter(adapter);
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError){
 
-
             }
         });
-
 
     }
 
