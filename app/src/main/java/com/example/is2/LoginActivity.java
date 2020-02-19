@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
+        //mAuth.signOut();
         username=(EditText) findViewById(R.id.editTextUsername);
         password=(EditText) findViewById(R.id.editTextPassword);
     }
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+                            startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
