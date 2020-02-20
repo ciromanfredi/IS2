@@ -108,4 +108,9 @@ public class SportEvent {
         this.eventnumberofplayers = eventnumberofplayers;
     }
 
+    public int getPartecipanticorrenti(){
+        if(!(eventnumberofplayers==null))
+            return eventnumberofplayers.size();
+        return 0;
+    }
 }

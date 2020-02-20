@@ -40,7 +40,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="18dp"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/imageAdd"
+                android:layout_toLeftOf="@+id/sportevent_immagine"
                 android:padding="5dp"
                 android:text="Luogo"
                 android:textSize="17dp"
@@ -76,7 +76,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/sportevent_playersnumber"
+                android:id="@+id/sportevent_npartecipanti"
                 android:layout_width="50dp"
                 android:layout_height="20dp"
                 android:layout_below="@+id/sportevent_place"
@@ -93,7 +93,7 @@
 
 
             <ImageView
-                android:id="@+id/imageAdd"
+                android:id="@+id/sportevent_immagine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/sportevent_name"

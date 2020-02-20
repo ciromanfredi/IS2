@@ -8,8 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,8 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -27,26 +23,22 @@ public class HomeActivity extends AppCompatActivity {
     //Map<String,Map<String, Object>> EventSport=new HashMap<String, Map<String, Object>>();
     //Map<String,Map<String, Object>> user=new HashMap<String, Map<String, Object>>();
 
-
-   ListView listView;
+    ListView ListView;
     FirebaseDatabase database;
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
     ArrayAdapter<SportEvent>  adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        //ListView = (ListView) findViewById(R.id.ListView);
+
         final RecyclerView rv = (RecyclerView)findViewById(R.id.rv);
 
-
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        GridLayoutManager glm= new GridLayoutManager(this,10);
+        //GridLayoutManager glm= new GridLayoutManager(this,10);
 
         rv.setLayoutManager(llm);
 
@@ -54,7 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         sportEvents = database.getReference("SportEvents");
 
         list = new ArrayList<>();
-
 
         sportEvents.addValueEventListener(new ValueEventListener(){
             @Override
@@ -70,20 +61,15 @@ public class HomeActivity extends AppCompatActivity {
                         System.out.println(sportevent);
                     }
                 }
-
-
                 RVAdapter adapter = new RVAdapter(list);
                 rv.setAdapter(adapter);
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError){
 
-
             }
         });
-
 
     }
 
