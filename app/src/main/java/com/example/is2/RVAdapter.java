@@ -1,6 +1,5 @@
 package com.example.is2;
 
-
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +14,9 @@ import java.util.ArrayList;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHolder>{
 
-    ArrayList<SportEvent> sportEvents;
-    RVAdapter(ArrayList<SportEvent> sportEvents){
+    public ArrayList<SportEvent> sportEvents;
+
+    public RVAdapter(ArrayList<SportEvent> sportEvents){
         this.sportEvents = sportEvents;
     }
 
@@ -34,13 +34,30 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         sportEventViewHolder.sportevent_ora.setText(sportEvents.get(i).getEventhour());
         sportEventViewHolder.sportevent_date.setText(sportEvents.get(i).getEventdate());
         sportEventViewHolder.sportevent_prezzo.setText(sportEvents.get(i).getEventprice());
-        sportEventViewHolder.sportevent_numeropartecipanti.setText(sportEvents.get(i).getPartecipanticorrenti()+"/"+sportEvents.get(i).getEventplayersnumber());
-/*        switch(sportEvents.get(i).getEventsport()) {
-            case "Nuoto":
-                path="@"
+        sportEventViewHolder.sportevent_numeropartecipanti.setText(sportEvents.get(i).getPartecipanticorrenti() + "/" + sportEvents.get(i).getEventplayersnumber());
+        switch (sportEvents.get(i).getEventsport()) {
+            case "Jogging":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_jogging);
+                break;
+            case "Tennis":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_tennis);
+                break;
+            case "Basket":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_basket);
+                break;
+            case "Soccer":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_soccer);
+                break;
+            case "Rugby":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_rugby);
+                break;
+            case "Volley":
+                sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_volley);
+                break;
+            default:
+                break;
         }
-        sportEventViewHolder.sportevent_immagine.setImageResource(path);
-*/
+
         sportEventViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,5 +112,4 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
             sportevent_immagine = itemView.findViewById(R.id.sportevent_immagine);
         }
     }
-
 }
