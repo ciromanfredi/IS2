@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
+        //mAuth.signOut();
         username=(EditText) findViewById(R.id.editTextUsername);
         password=(EditText) findViewById(R.id.editTextPassword);
     }
