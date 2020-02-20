@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">IS2</string>
+    <string name="nome">Nome</string>
+    <string name="cognome">Cognome</string>
+    <string name="email">Email</string>
+    <string name="citta">Città</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="confermapassword">Conferma Password</string>
