@@ -41,6 +41,13 @@
             android:inputType="textPassword"
             android:layout_marginBottom="20dp"/>
         <EditText
+            android:id="@+id/confermapassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Conferma Password"
+            android:inputType="textPassword"
+            android:layout_marginBottom="20dp"/>
+        <EditText
             android:id="@+id/nome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
