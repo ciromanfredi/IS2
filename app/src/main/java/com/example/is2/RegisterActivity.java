@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class RegisterActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    EditText c_username,c_password,c_nome,c_cognome,c_email,c_telefono,c_citta;
+    EditText c_username,c_password,c_confermapassword,c_nome,c_cognome,c_email,c_telefono,c_citta;
     Button registerButton;
     private static final String TAG = "RegisterActivity";
 
@@ -31,19 +31,24 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         Bundle extras=getIntent().getExtras();
-        //String usernamedata=extras.getString("username");
-        //String passworddata=extras.getString("password");
+        String usernamedata=extras.getString("username");
+        String passworddata=extras.getString("password");
+
         c_username = findViewById(R.id.username);
         c_password = findViewById(R.id.password);
+        c_confermapassword=findViewById(R.id.confermapassword);
         c_nome = findViewById(R.id.nome);
         c_cognome = findViewById(R.id.cognome);
         c_email = findViewById(R.id.email);
         c_telefono = findViewById(R.id.telefono);
         c_citta = findViewById(R.id.citta);
         registerButton = findViewById(R.id.registerBtn);
-        //username.setText(usernamedata);
-        //password.setText(passworddata);
+
+        c_username.setText(usernamedata);
+        c_password.setText(passworddata);
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -57,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                String username = c_username.getText().toString().trim();
                String password = c_password.getText().toString().trim();
+               String confermapassword = c_confermapassword.getText().toString().trim();
                String nome = c_nome.getText().toString().trim();
                String cognome = c_cognome.getText().toString().trim();
                String email = c_email.getText().toString().trim();
@@ -74,6 +80,10 @@ public class RegisterActivity extends AppCompatActivity {
                if(password.length()<6){
                     c_password.setError("La Password deve avere almeno 6 caratteri.");
                     return;
+               }
+               if(!confermapassword.equals(password)) {
+                   c_confermapassword.setError("Le due password non corrispondono");
+                   return;
                }
                if(TextUtils.isEmpty(nome)){
                    c_nome.setError("Inserisci il tuo Nome.");
@@ -104,6 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                            Log.d(TAG, "createUserWithEmail:success");
                            FirebaseUser user = mAuth.getCurrentUser();
                            Toast.makeText(RegisterActivity.this, "Register success.", Toast.LENGTH_SHORT).show();
+
                            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
                        }else{
                            Toast.makeText(RegisterActivity.this,"Error ! "+ task.getException().getMessage(),Toast.LENGTH_SHORT).show();
