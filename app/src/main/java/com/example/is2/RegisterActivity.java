@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if(mAuth.getCurrentUser() != null){
-            startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
             finish();
         }
 
@@ -77,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                final String cognome = c_cognome.getText().toString().trim();
                final String telefono = c_telefono.getText().toString().trim();
                final String citta = c_citta.getText().toString().trim();
-/*
+
                 if(TextUtils.isEmpty(email)){
                     c_email.setError("Inserisci la tua Email.");
                     return;
@@ -114,7 +114,7 @@ public class RegisterActivity extends AppCompatActivity {
                    c_telefono.setError("Inserisci il tuo numero di Telefono.");
                    return;
                }
-*/
+
                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                    @Override
                    public void onComplete(@NonNull Task<AuthResult> task) {
@@ -126,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
                            Toast.makeText(RegisterActivity.this, "Register success.", Toast.LENGTH_SHORT).show();
                            User userobj=new User(email,password,username,nome,cognome,telefono,citta);
                            mDatabase.child("Users").child(String.valueOf(user.getUid())).setValue(userobj);
-                           startActivity(new Intent(getApplicationContext(),HomeActivity.class));
+                           startActivity(new Intent(getApplicationContext(),MainActivity.class));
                        }else{
                            Toast.makeText(RegisterActivity.this,"Error ! "+ task.getException().getMessage(),Toast.LENGTH_SHORT).show();
                        }
