@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHolder>{
 
     ArrayList<SportEvent> sportEvents;
@@ -26,6 +24,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
     @Override
     public SportEventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_element, viewGroup, false);
+        /*
         final Context context = v.getContext();
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +42,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
                 context.startActivity(intent);
             }
         });
+        */
         SportEventViewHolder pvh = new SportEventViewHolder(v);
         return pvh;
     }
@@ -52,9 +52,15 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         sportEventViewHolder.sportevent_name.setText(sportEvents.get(i).getEventname());
         sportEventViewHolder.sportevent_luogo.setText(sportEvents.get(i).getEventplace());
         sportEventViewHolder.sportevent_ora.setText(sportEvents.get(i).getEventhour());
+        sportEventViewHolder.sportevent_date.setText(sportEvents.get(i).getEventdate());
         sportEventViewHolder.sportevent_prezzo.setText(sportEvents.get(i).getEventprice());
         sportEventViewHolder.sportevent_numeropartecipanti.setText(sportEvents.get(i).getPartecipanticorrenti()+"/"+sportEvents.get(i).getEventplayersnumber());
-
+        switch(sportEvents.get(i).getEventsport()) {
+            case "Nuoto":
+                path="@"
+        }
+        sportEventViewHolder.sportevent_immagine.setImageResource(path);
+/*
         sportEventViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,6 +77,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
                 context.startActivity(intent);
             }
         });
+ */
+
     }
 
     @Override
@@ -89,18 +97,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         TextView sportevent_name;
         TextView sportevent_luogo;
         TextView sportevent_ora;
+        TextView sportevent_date;
         TextView sportevent_prezzo;
         TextView sportevent_numeropartecipanti;
+        ImageView sportevent_immagine;
 
         SportEventViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
-            sportevent_name = (TextView)itemView.findViewById(R.id.name);
-            sportevent_luogo = (TextView)itemView.findViewById(R.id.luogo);
-            sportevent_ora = (TextView)itemView.findViewById(R.id.ora);
-            sportevent_prezzo = (TextView)itemView.findViewById(R.id.prezzo);
-            sportevent_numeropartecipanti = (TextView)itemView.findViewById(R.id.numeropartecipanti);
-
+            sportevent_name = (TextView)itemView.findViewById(R.id.sportevent_name);
+            sportevent_luogo = (TextView)itemView.findViewById(R.id.sportevent_place);
+            sportevent_date = (TextView)itemView.findViewById(R.id.sportevent_date);
+            sportevent_ora = (TextView)itemView.findViewById(R.id.sportevent_hour);
+            sportevent_prezzo = (TextView)itemView.findViewById(R.id.sportevent_price);
+            sportevent_numeropartecipanti = (TextView)itemView.findViewById(R.id.sportevent_npartecipanti);
+            sportevent_immagine = itemView.findViewById(R.id.sportevent_immagine);
         }
 
 
