@@ -6,20 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.is2.ModProfileActivity;
 import com.example.is2.R;
-import com.example.is2.RVAdapter;
-import com.example.is2.SportEvent;
-import com.example.is2.SportEventActivity;
-import com.example.is2.User;
+import com.example.is2.javaclass.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

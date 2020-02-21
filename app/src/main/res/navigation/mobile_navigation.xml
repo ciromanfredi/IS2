@@ -9,7 +9,11 @@
         android:id="@+id/navigation_events"
         android:name="com.example.is2.ui.events.EventsFragment"
         android:label="@string/title_events"
-        tools:layout="@layout/fragment_events" />
+        tools:layout="@layout/fragment_events" >
+        <action
+            android:id="@+id/action_navigation_event_singolo"
+            app:destination="@+id/navigation_eventsingolo" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_aroundme"
@@ -22,5 +26,9 @@
         android:name="com.example.is2.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/navigation_eventsingolo"
+        android:name="com.example.is2.ui.events.EventsingoloFragment"
+        tools:layout="@layout/fragment_sport_event"/>
 
 </navigation>
