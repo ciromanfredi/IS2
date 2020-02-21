@@ -1,4 +1,4 @@
-package com.example.is2;
+package com.example.is2.javaclass;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;

@@ -1,6 +1,6 @@
 package com.example.is2;
 
-import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +8,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.is2.javaclass.SportEvent;
+import com.example.is2.ui.events.EventsFragment;
 
 import java.util.ArrayList;
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHolder>{
 
     public ArrayList<SportEvent> sportEvents;
+//    public FragmentActivity  fragmentactivity;
 
     public RVAdapter(ArrayList<SportEvent> sportEvents){
         this.sportEvents = sportEvents;
     }
+
+//    public void setRVAdapterfa(FragmentActivity fa){this.fragmentactivity=fa;}
 
     @Override
     public SportEventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -61,7 +68,8 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         sportEventViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), SportEventActivity.class);
+
+/*                Intent intent = new Intent(v.getContext(), SportEventActivity.class);
                 intent.putExtra("nome", sportEvents.get(i).getEventname()); //Optional parameters
                 intent.putExtra("luogo", sportEvents.get(i).getEventplace());
                 intent.putExtra("ora", sportEvents.get(i).getEventhour());
@@ -73,6 +81,21 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
                 intent.putExtra("data", sportEvents.get(i).getEventdate());
                 intent.putExtra("partecipanti",sportEvents.get(i).getEventnumberofplayers());
                 v.getContext().startActivity(intent);
+ */
+                Bundle b= new Bundle();
+ /*               b.putString("nome", sportEvents.get(i).getEventname()); //Optional parameters
+                b.putString("luogo", sportEvents.get(i).getEventplace());
+                b.putString("ora", sportEvents.get(i).getEventhour());
+                b.putString("prezzo", sportEvents.get(i).getEventprice());
+                b.putString("maxpartecipanti", sportEvents.get(i).getEventplayersnumber());
+                b.putInt("currentpartecipanti", sportEvents.get(i).getPartecipanticorrenti());
+                b.putString("sport", sportEvents.get(i).getEventsport());
+                b.putString("proprietario", sportEvents.get(i).getEventowner());
+                b.putString("data", sportEvents.get(i).getEventdate());
+                b.putStringArrayList("partecipanti",sportEvents.get(i).getEventnumberofplayers());
+*/
+                b.putString("idevento", EventsFragment.getDati().get(i));
+                Navigation.findNavController(v).navigate(R.id.action_navigation_event_singolo,b);
             }
         });
     }
