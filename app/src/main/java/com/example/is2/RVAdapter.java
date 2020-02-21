@@ -19,13 +19,11 @@ import java.util.ArrayList;
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHolder>{
 
     public ArrayList<SportEvent> sportEvents;
-//    public FragmentActivity  fragmentactivity;
 
     public RVAdapter(ArrayList<SportEvent> sportEvents){
         this.sportEvents = sportEvents;
     }
 
-//    public void setRVAdapterfa(FragmentActivity fa){this.fragmentactivity=fa;}
 
     @Override
     public SportEventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -83,7 +81,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
                 v.getContext().startActivity(intent);
  */
                 Bundle b= new Bundle();
- /*               b.putString("nome", sportEvents.get(i).getEventname()); //Optional parameters
+                b.putString("nome", sportEvents.get(i).getEventname()); //Optional parameters
                 b.putString("luogo", sportEvents.get(i).getEventplace());
                 b.putString("ora", sportEvents.get(i).getEventhour());
                 b.putString("prezzo", sportEvents.get(i).getEventprice());
@@ -93,7 +91,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
                 b.putString("proprietario", sportEvents.get(i).getEventowner());
                 b.putString("data", sportEvents.get(i).getEventdate());
                 b.putStringArrayList("partecipanti",sportEvents.get(i).getEventnumberofplayers());
-*/
                 b.putString("idevento", EventsFragment.getDati().get(i));
                 Navigation.findNavController(v).navigate(R.id.action_navigation_event_singolo,b);
             }

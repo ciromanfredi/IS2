@@ -55,7 +55,6 @@ public class EventsingoloFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-/*
         String nome=getArguments().getString("nome");
         String luogo=getArguments().getString("luogo");
         String ora=getArguments().getString("ora");
@@ -66,52 +65,18 @@ public class EventsingoloFragment extends Fragment {
         String proprietario=getArguments().getString("proprietario");
         String data=getArguments().getString("data");
         final ArrayList<String> partecipanti=getArguments().getStringArrayList("partecipanti");
-        final String idevento=getArguments().getString("idevento");
-        */
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final String iduser = user.getUid();
 
         final String idevento=getArguments().getString("idevento");
         System.out.println("id evento"+idevento);
-        getDBData(idevento,iduser);
         //System.out.println(nome +" "+luogo+" "+ora+" "+prezzo+" "+maxpartecipanti+" "+currentpartecipanti+" "+sport+" "+proprietario+" "+data);
-
-
         System.out.println("id evento"+idevento+" id user"+iduser);
 
 
         mDatabase = FirebaseDatabase.getInstance().getReference("SportEvents");
 
-        final boolean partecipa;
-        if (partecipanti.contains(iduser))
-            partecipa = true;
-        else
-            partecipa = false;
-
-        button = (Button) getActivity().findViewById(R.id.button);
-        if (partecipa)
-            button.setText("Abbandona");
-        else
-            button.setText("Partecipa");
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!partecipa){
-                    getDBData(idevento);
-                getDBData(iduser);}
-                else{
-                    onViewCreated(view, savedInstanceState);
-                    }
-
-                mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
-            }
-        });
-
-    }
-
-    public void rendering(String nome, String luogo, String sport, String data, String ora, String prezzo, String currentpartecipanti, String maxpartecipanti, final ArrayList<String> partecipanti, final String iduser,final String idevento) {
         TextView sportevent_name = getActivity().findViewById(R.id.single_sportevent_name);
         sportevent_name.setText(nome);
 
@@ -158,30 +123,37 @@ public class EventsingoloFragment extends Fragment {
                 break;
             default:
                 break;
+
         }
 
+        //GESTIRE BOTTONE....
+        /*
+        final boolean partecipa;
+        if (partecipanti.contains(iduser))
+            partecipa = true;
+        else
+            partecipa = false;
 
-    }
+        button = (Button) getActivity().findViewById(R.id.button);
+        if (partecipa)
+            button.setText("Abbandona");
+        else
+            button.setText("Partecipa");
 
-    public SportEvent getDBData(final String iduser, final String idevento){
-        DatabaseReference sportEvents = FirebaseDatabase.getInstance().getReference("SportEvents").child(idevento);
-        Query evento = sportEvents;
-
-        evento.addListenerForSingleValueEvent(new ValueEventListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-/*                System.out.println("dddddd"+dataSnapshot);
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){*/
-                 SportEvent se = dataSnapshot.getValue(SportEvent.class);
-                    System.out.println("oooook"+se.getEventsport());
-                    rendering(se.getEventname(),se.getEventplace(),se.getEventsport(),se.getEventdate(),se.getEventhour(),se.getEventprice(),"current","max",se.getEventnumberofplayers(),iduser,idevento);
- //               }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onClick(View v) {
+                if(!partecipa){
+                    getDBData(idevento);
+                getDBData(iduser);}
+                else{
+                    onViewCreated(view, savedInstanceState);
+                    }
+
+                mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
             }
         });
-        return new SportEvent();
+        */
     }
 
 }
