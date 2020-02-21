@@ -21,6 +21,6 @@ public class ModProfileActivity extends AppCompatActivity {
         String citta=extras.getString("citta");
         ArrayList<String> preferenze=extras.getStringArrayList("preferenze");
 
-        
+
     }
 }
