@@ -4,10 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SportEventActivity">
-
-
-
+    >
 
     <Button
         android:id="@+id/button"
@@ -38,6 +35,7 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@id/single_sportevent_name"
@@ -173,5 +171,15 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/single_textView2"
         app:layout_constraintTop_toBottomOf="@+id/single_sportevent_immagine" />
+
+    <ListView
+        android:id="@+id/listviewexp"
+        android:layout_width="233dp"
+        android:layout_height="91dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="432dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

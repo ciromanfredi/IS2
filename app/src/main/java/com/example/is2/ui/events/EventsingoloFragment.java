@@ -1,10 +1,7 @@
 package com.example.is2.ui.events;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -12,13 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.is2.ListUserAdapter;
 import com.example.is2.R;
-import com.example.is2.RVAdapter;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.javaclass.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,8 +28,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
-import static com.google.common.base.Predicates.equalTo;
 
 public class EventsingoloFragment extends Fragment {
 
@@ -119,6 +114,7 @@ public class EventsingoloFragment extends Fragment {
                 System.out.println(dataSnapshot);
                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                     partecipantiObj.add(singleSnapshot.getValue(User.class));
+                    listUserEvent(partecipantiObj);
                 }
             }
             @Override
@@ -186,4 +182,10 @@ public class EventsingoloFragment extends Fragment {
         });
     }
 
+    public void listUserEvent(ArrayList<User> userList){
+        //ListView myListView = new ListView(getActivity().getApplicationContext());
+        ListView myListView = getActivity().findViewById(R.id.listviewexp);
+        ListUserAdapter adapter = new ListUserAdapter(getActivity().getApplicationContext(), R.layout.user_list_element, userList);
+        myListView.setAdapter(adapter);
+    }
 }
