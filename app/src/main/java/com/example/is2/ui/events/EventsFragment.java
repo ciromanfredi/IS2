@@ -1,11 +1,20 @@
 package com.example.is2.ui.events;
+import com.example.is2.AddEvent;
+import com.example.is2.LoginActivity;
+import com.example.is2.MainActivity;
 import com.example.is2.RVAdapter;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.is2.R;
 import com.example.is2.javaclass.SportEvent;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +48,28 @@ public class EventsFragment extends Fragment {
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
     ArrayAdapter<SportEvent> adapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.event_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.create_event){
+            Intent intent = new Intent(getActivity().getApplicationContext(), AddEvent.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
