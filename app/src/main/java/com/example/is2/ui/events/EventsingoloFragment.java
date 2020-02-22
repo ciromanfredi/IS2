@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,7 @@ import static com.google.common.base.Predicates.equalTo;
 
 public class EventsingoloFragment extends Fragment {
 
-    DatabaseReference mDatabase ;
-    Button button;
+    DatabaseReference mDatabase;
 
     public EventsingoloFragment() {
         // Required empty public constructor
@@ -54,29 +54,19 @@ public class EventsingoloFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        String nome=getArguments().getString("nome");
-        String luogo=getArguments().getString("luogo");
-        String ora=getArguments().getString("ora");
-        String prezzo=getArguments().getString("prezzo");
-        String maxpartecipanti=getArguments().getString("maxpartecipanti");
-        String currentpartecipanti=getArguments().getString("currentpartecipanti");
-        String sport=getArguments().getString("sport");
-        String proprietario=getArguments().getString("proprietario");
-        String data=getArguments().getString("data");
-        final ArrayList<String> partecipanti=getArguments().getStringArrayList("partecipanti");
-
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final String iduser = user.getUid();
 
         final String idevento=getArguments().getString("idevento");
-        System.out.println("id evento"+idevento);
-        //System.out.println(nome +" "+luogo+" "+ora+" "+prezzo+" "+maxpartecipanti+" "+currentpartecipanti+" "+sport+" "+proprietario+" "+data);
         System.out.println("id evento"+idevento+" id user"+iduser);
-
-
         mDatabase = FirebaseDatabase.getInstance().getReference("SportEvents");
+        getDBData(iduser,idevento);
 
+    }
+
+    public void rendering(String nome, String luogo, String sport, String data, String ora, String prezzo, String maxpartecipanti,final ArrayList<String> partecipanti,final String iduser, final String idevento){
+
+        int currentpartecipanti=partecipanti.size();
         TextView sportevent_name = getActivity().findViewById(R.id.single_sportevent_name);
         sportevent_name.setText(nome);
 
@@ -93,12 +83,8 @@ public class EventsingoloFragment extends Fragment {
         TextView sportevent_price = getActivity().findViewById(R.id.single_sportevent_price);
         sportevent_price.setText(" Costo: " + prezzo + "€");
 
-
         TextView sportevent_numeropartecipanti = getActivity().findViewById(R.id.single_sportevent_numeropartecipanti);
-        if (currentpartecipanti != null)
-            sportevent_numeropartecipanti.setText("0/" + maxpartecipanti);
-        else
-            sportevent_numeropartecipanti.setText(currentpartecipanti + "/" + maxpartecipanti);
+        sportevent_numeropartecipanti.setText(currentpartecipanti + "/" + maxpartecipanti);
 
 
         ImageView sportevent_immagine = getActivity().findViewById(R.id.single_sportevent_immagine);
@@ -123,37 +109,81 @@ public class EventsingoloFragment extends Fragment {
                 break;
             default:
                 break;
-
         }
 
-        //GESTIRE BOTTONE....
-        /*
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
+        final ArrayList<User> partecipantiObj=new ArrayList<>();
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                    partecipantiObj.add(singleSnapshot.getValue(User.class));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("EventsingoloFragment", "onCancelled", databaseError.toException());
+            }
+        });
+
+        final boolean eventfull=(currentpartecipanti==Integer.parseInt(maxpartecipanti));
+
         final boolean partecipa;
         if (partecipanti.contains(iduser))
             partecipa = true;
         else
             partecipa = false;
 
-        button = (Button) getActivity().findViewById(R.id.button);
+        final Button button = (Button) getActivity().findViewById(R.id.button);
         if (partecipa)
             button.setText("Abbandona");
         else
-            button.setText("Partecipa");
-
+            if(!eventfull)
+                button.setText("Partecipa");
+            else {
+                button.setText("Evento Full!");
+                return;
+                }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!partecipa){
-                    getDBData(idevento);
-                getDBData(iduser);}
-                else{
-                    onViewCreated(view, savedInstanceState);
+                    if(!eventfull){
+                        button.setText("Abbandona");
+                        partecipanti.add(iduser);
+                        mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                        getDBData(iduser,idevento);
                     }
-
-                mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                }
+                else{
+                    button.setText("Partecipa");
+                    partecipanti.remove(iduser);
+                    mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                    getDBData(iduser,idevento);
+                }
             }
         });
-        */
+
+    }
+
+    public void getDBData(final String iduser, final String idevento){
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference("SportEvents");
+        DatabaseReference ref = database.child(idevento);
+
+        Query query = ref;
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                SportEvent sportevent = dataSnapshot.getValue(SportEvent.class);
+                rendering(sportevent.getEventname(),sportevent.getEventplace(),sportevent.getEventsport(),sportevent.getEventdate(),sportevent.getEventhour(),sportevent.getEventprice(),sportevent.getEventplayersnumber(),sportevent.getEventnumberofplayers(),iduser,idevento);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("EventsingoloFragment", "onCancelled", databaseError.toException());
+            }
+        });
     }
 
 }

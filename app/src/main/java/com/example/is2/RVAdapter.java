@@ -66,31 +66,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         sportEventViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-/*                Intent intent = new Intent(v.getContext(), SportEventActivity.class);
-                intent.putExtra("nome", sportEvents.get(i).getEventname()); //Optional parameters
-                intent.putExtra("luogo", sportEvents.get(i).getEventplace());
-                intent.putExtra("ora", sportEvents.get(i).getEventhour());
-                intent.putExtra("prezzo", sportEvents.get(i).getEventprice());
-                intent.putExtra("maxpartecipanti", sportEvents.get(i).getEventplayersnumber());
-                intent.putExtra("currentpartecipanti", sportEvents.get(i).getPartecipanticorrenti());
-                intent.putExtra("sport", sportEvents.get(i).getEventsport());
-                intent.putExtra("proprietario", sportEvents.get(i).getEventowner());
-                intent.putExtra("data", sportEvents.get(i).getEventdate());
-                intent.putExtra("partecipanti",sportEvents.get(i).getEventnumberofplayers());
-                v.getContext().startActivity(intent);
- */
                 Bundle b= new Bundle();
-                b.putString("nome", sportEvents.get(i).getEventname()); //Optional parameters
-                b.putString("luogo", sportEvents.get(i).getEventplace());
-                b.putString("ora", sportEvents.get(i).getEventhour());
-                b.putString("prezzo", sportEvents.get(i).getEventprice());
-                b.putString("maxpartecipanti", sportEvents.get(i).getEventplayersnumber());
-                b.putInt("currentpartecipanti", sportEvents.get(i).getPartecipanticorrenti());
-                b.putString("sport", sportEvents.get(i).getEventsport());
-                b.putString("proprietario", sportEvents.get(i).getEventowner());
-                b.putString("data", sportEvents.get(i).getEventdate());
-                b.putStringArrayList("partecipanti",sportEvents.get(i).getEventnumberofplayers());
                 b.putString("idevento", EventsFragment.getDati().get(i));
                 Navigation.findNavController(v).navigate(R.id.action_navigation_event_singolo,b);
             }
