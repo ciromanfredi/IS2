@@ -1,6 +1,9 @@
 package com.example.is2;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;

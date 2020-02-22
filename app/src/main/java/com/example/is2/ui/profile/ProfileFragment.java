@@ -3,17 +3,20 @@ package com.example.is2.ui.profile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.is2.LoginActivity;
-import com.example.is2.ModProfileActivity;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +34,32 @@ public class ProfileFragment extends Fragment {
     TextView c_nome;
     DatabaseReference users;
     User userobj=null;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.user_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.logout){
+            Toast.makeText(getActivity(),"Logout", Toast.LENGTH_SHORT).show();
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.signOut();
+            getActivity().finish();
+            Intent logout_int = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+            startActivity(logout_int);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -69,19 +98,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        logout_btn = getActivity().findViewById(R.id.logout);
-        logout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                mAuth.signOut();
-                getActivity().finish();
-                Intent logout_int = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-                startActivity(logout_int);
-            }
-        });
-
-        Button modificabtn = getActivity().findViewById(R.id.modifica);
+        /*Button modificabtn = getActivity().findViewById(R.id.modifica);
         modificabtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +111,7 @@ public class ProfileFragment extends Fragment {
                 intent.putExtra("preferenze",userobj.getPreferenze());
                 v.getContext().startActivity(intent);
             }
-        });
+        });*/
 
     }
 

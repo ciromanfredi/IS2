@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.is2.javaclass.User;
+import com.example.is2.ui.events.EventsFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -29,6 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +48,8 @@ public class AddEvent extends AppCompatActivity {
     Button creaButton;
     String indirizzo,citta,data,time,prezzo,titolo;
     String maxPartecipanti;
+    String userID;
+    ArrayList<String> partecipanti;
 
 
     TimePickerDialog pickerTime;
@@ -58,7 +63,12 @@ public class AddEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
 
+        partecipanti = new ArrayList<>();
 
+        // Initialize Firebase Database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        userID = mAuth.getCurrentUser().getUid();
         Bundle extras = getIntent().getExtras();
 
 
@@ -97,11 +107,6 @@ public class AddEvent extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
-
-
-        // Initialize Firebase Database
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mAuth = FirebaseAuth.getInstance();
 
         eText = (EditText) findViewById(R.id.editText1);
         eText.setInputType(InputType.TYPE_NULL);
@@ -186,9 +191,8 @@ public class AddEvent extends AppCompatActivity {
                     return;
                 }
 
-
                 String key = mDatabase.child("SportEvents").push().getKey();
-
+                partecipanti.add(mAuth.getCurrentUser().getUid());
                 mDatabase.child("SportEvents").child(key).child("sporteventdate").setValue(data);
                 mDatabase.child("SportEvents").child(key).child("sporteventhour").setValue(time);
                 mDatabase.child("SportEvents").child(key).child("sporteventplace").setValue(indirizzo);
@@ -197,6 +201,11 @@ public class AddEvent extends AppCompatActivity {
                 mDatabase.child("SportEvents").child(key).child("sporteventowner").setValue(citta);
                 mDatabase.child("SportEvents").child(key).child("eventplayersnumber").setValue(maxPartecipanti);
                 mDatabase.child("SportEvents").child(key).child("eventprice").setValue(prezzo);
+                mDatabase.child("SportEvents").child(key).child("eventnumberofplayers").setValue(partecipanti);
+
+
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         }
         );
