@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.is2.LoginActivity;
 import com.example.is2.ModProfileActivity;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
@@ -25,13 +27,15 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileFragment extends Fragment {
 
     //private ProfileViewModel profileViewModel;
+    Button logout_btn;
+    TextView c_nome;
     DatabaseReference users;
     User userobj=null;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
+        c_nome = getActivity().findViewById(R.id.nome);
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
-
         /*
         final TextView textView = root.findViewById(R.id.text_profile);
         profileViewModel.getText().observe(this, new Observer<String>() {
@@ -55,7 +59,7 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot){
                 System.out.println("numero figli"+dataSnapshot.getChildrenCount());
                 userobj=dataSnapshot.getValue(User.class);
-                System.out.println(userobj.getUsername());
+                System.out.println(userobj.getEmail());
 
             }
 
@@ -65,7 +69,19 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        Button modificabtn=(Button) getActivity().findViewById(R.id.modifica);
+        logout_btn = getActivity().findViewById(R.id.logout);
+        logout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.signOut();
+                getActivity().finish();
+                Intent logout_int = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                startActivity(logout_int);
+            }
+        });
+
+        Button modificabtn = getActivity().findViewById(R.id.modifica);
         modificabtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
