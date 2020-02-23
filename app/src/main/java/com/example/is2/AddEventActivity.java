@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddEvent extends AppCompatActivity {
+public class AddEventActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -118,7 +118,7 @@ public class AddEvent extends AppCompatActivity {
                 int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
                 // date picker dialog
-                picker = new DatePickerDialog(AddEvent.this,
+                picker = new DatePickerDialog(AddEventActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -138,7 +138,7 @@ public class AddEvent extends AppCompatActivity {
                 int hour = cldrTime.get(Calendar.HOUR_OF_DAY);
                 int minutes = cldrTime.get(Calendar.MINUTE);
                 // time picker dialog
-                pickerTime = new TimePickerDialog(AddEvent.this,
+                pickerTime = new TimePickerDialog(AddEventActivity.this,
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker tp, int sHour, int sMinute) {

@@ -1,4 +1,4 @@
-package com.example.is2;
+package com.example.is2.RVAdapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,16 +11,17 @@ import androidx.cardview.widget.CardView;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.is2.R;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.ui.events.EventsFragment;
 
 import java.util.ArrayList;
 
-public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHolder>{
+public class RVAdapterSportEvent extends RecyclerView.Adapter<RVAdapterSportEvent.SportEventViewHolder>{
 
     public ArrayList<SportEvent> sportEvents;
 
-    public RVAdapter(ArrayList<SportEvent> sportEvents){
+    public RVAdapterSportEvent(ArrayList<SportEvent> sportEvents){
         this.sportEvents = sportEvents;
     }
 
@@ -39,7 +40,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.SportEventViewHold
         sportEventViewHolder.sportevent_ora.setText(sportEvents.get(i).getEventhour());
         sportEventViewHolder.sportevent_date.setText(sportEvents.get(i).getEventdate());
         sportEventViewHolder.sportevent_prezzo.setText(sportEvents.get(i).getEventprice());
-        sportEventViewHolder.sportevent_numeropartecipanti.setText(sportEvents.get(i).getPartecipanticorrenti() + "/" + sportEvents.get(i).getEventplayersnumber());
+        sportEventViewHolder.sportevent_numeropartecipanti.setText(sportEvents.get(i).getnumberofpartecipanticorrenti() + "/" + sportEvents.get(i).getEventplayersnumber());
         switch (sportEvents.get(i).getEventsport()) {
             case "Jogging":
                 sportEventViewHolder.sportevent_immagine.setImageResource(R.drawable.ic_jogging);

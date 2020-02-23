@@ -22,6 +22,7 @@ public class SportEvent {
 
     public SportEvent(){
 
+
     }
 
     public SportEvent(String eventdate,String eventhour,String eventname,String eventowner,String eventplace,String eventplayersnumber,String eventprice,String eventsport,ArrayList<String> eventnumberofplayers){
@@ -30,9 +31,9 @@ public class SportEvent {
         this.eventname=eventname;
         this.eventowner=eventowner;
         this.eventplace=eventplace;
-        this.eventplayersnumber=eventplayersnumber;
         this.eventprice=eventprice;
         this.eventsport=eventsport;
+        this.eventplayersnumber=eventplayersnumber;
         this.eventnumberofplayers=eventnumberofplayers;
     }
 
@@ -101,14 +102,16 @@ public class SportEvent {
     }
 
     public ArrayList<String> getEventnumberofplayers() {
-        return eventnumberofplayers;
+        if(eventnumberofplayers!=null)
+            return eventnumberofplayers;
+        return new ArrayList<String>();
     }
 
     public void setEventnumberofplayers(ArrayList<String> eventnumberofplayers) {
         this.eventnumberofplayers = eventnumberofplayers;
     }
 
-    public int getPartecipanticorrenti(){
+    public int getnumberofpartecipanticorrenti(){
         if(!(eventnumberofplayers==null))
             return eventnumberofplayers.size();
         return 0;

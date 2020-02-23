@@ -1,9 +1,14 @@
 package com.example.is2.ui.events;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,13 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import com.example.is2.ListUserAdapter;
 import com.example.is2.R;
+import com.example.is2.RVAdapter.RVAdapterUser;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.javaclass.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,12 +31,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class EventsingoloFragment extends Fragment {
 
     DatabaseReference mDatabase;
+    FirebaseStorage storage;
 
     public EventsingoloFragment() {
         // Required empty public constructor
@@ -59,14 +69,24 @@ public class EventsingoloFragment extends Fragment {
 
     }
 
-    public void rendering(String nome, String luogo, String sport, String data, String ora, String prezzo, String maxpartecipanti,final ArrayList<String> partecipanti,final String iduser, final String idevento){
+    public void rendering(SportEvent sportevent, final String iduser, final String idevento){
+        System.out.println(sportevent);
+        String nome=sportevent.getEventname();
+        String luogo=sportevent.getEventplace();
+        String sport=sportevent.getEventsport();
+        String data=sportevent.getEventdate();
+        String ora=sportevent.getEventhour();
+        String prezzo=sportevent.getEventprice();
+        String numbermaxpartecipanti=sportevent.getEventplayersnumber();
+        final ArrayList<String> partecipanti=sportevent.getEventnumberofplayers();
+        int numbercurrentpartecipanti=sportevent.getnumberofpartecipanticorrenti();
 
-        int currentpartecipanti=partecipanti.size();
         TextView sportevent_name = getActivity().findViewById(R.id.single_sportevent_name);
         sportevent_name.setText(nome);
 
         TextView sportevent_place = getActivity().findViewById(R.id.single_sportevent_place);
         sportevent_place.setText("Luogo: " + luogo);
+
         TextView sportevent_type = getActivity().findViewById(R.id.single_sportevent_type);
         sportevent_type.setText("Tipo: " + sport);
 
@@ -79,8 +99,7 @@ public class EventsingoloFragment extends Fragment {
         sportevent_price.setText(" Costo: " + prezzo + "€");
 
         TextView sportevent_numeropartecipanti = getActivity().findViewById(R.id.single_sportevent_numeropartecipanti);
-        sportevent_numeropartecipanti.setText(currentpartecipanti + "/" + maxpartecipanti);
-
+        sportevent_numeropartecipanti.setText(numbercurrentpartecipanti + "/" + numbermaxpartecipanti);
 
         ImageView sportevent_immagine = getActivity().findViewById(R.id.single_sportevent_immagine);
         switch (sport) {
@@ -108,58 +127,89 @@ public class EventsingoloFragment extends Fragment {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
         final ArrayList<User> partecipantiObj=new ArrayList<>();
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    partecipantiObj.add(singleSnapshot.getValue(User.class));
+        System.out.println("non va"+partecipantiObj.size());
+        storage = FirebaseStorage.getInstance();
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://is-2-268215.appspot.com").child("imagepdf.png");
+
+        try {
+            final File localFile = File.createTempFile("images", "png");
+            database.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    System.out.println(dataSnapshot+"dsdd"+dataSnapshot.getChildrenCount());
+                    for (final DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                        System.out.println("hey tu");
+                        System.out.println(singleSnapshot);
+                        if(partecipanti.contains(singleSnapshot.getKey())){
+                                storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                        System.out.println("Tutto con successo");
+                                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                                        User user = singleSnapshot.getValue(User.class);
+                                        user.setBitmap(bitmap);
+                                        partecipantiObj.add(user);
+                                        System.out.println("sonoquiiiiiii " + partecipantiObj);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        System.out.println("OnFailureListener Debug");
+                                    }
+                                });
+                        }
+                    }
+                    System.out.println("aggiorno visuale di "+partecipantiObj.size());
                     listUserEvent(partecipantiObj);
                 }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("EventsingoloFragment", "onCancelled", databaseError.toException());
-            }
-        });
 
-        final boolean eventfull=(currentpartecipanti==Integer.parseInt(maxpartecipanti));
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.e("EventsingoloFragment", "onCancelled", databaseError.toException());
+                }
+            });
 
-        final boolean partecipa;
-        if (partecipanti.contains(iduser))
-            partecipa = true;
-        else
-            partecipa = false;
+            final boolean eventfull=(numbercurrentpartecipanti==Integer.parseInt(numbermaxpartecipanti));
 
-        final Button button = (Button) getActivity().findViewById(R.id.button);
-        if (partecipa)
-            button.setText("Abbandona");
-        else
+            final boolean partecipa;
+            if (partecipanti.contains(iduser))
+                partecipa = true;
+            else
+                partecipa = false;
+
+            final Button button = (Button) getActivity().findViewById(R.id.button);
+            if (partecipa)
+                button.setText("Abbandona");
+            else
             if(!eventfull)
                 button.setText("Partecipa");
             else {
                 button.setText("Evento Full!");
                 return;
-                }
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!partecipa){
-                    if(!eventfull){
-                        button.setText("Abbandona");
-                        partecipanti.add(iduser);
+            }
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!partecipa){
+                        if(!eventfull){
+                            button.setText("Abbandona");
+                            partecipanti.add(iduser);
+                            mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                            getDBData(iduser,idevento);
+                        }
+                    }
+                    else{
+                        button.setText("Partecipa");
+                        partecipanti.remove(iduser);
                         mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
                         getDBData(iduser,idevento);
                     }
                 }
-                else{
-                    button.setText("Partecipa");
-                    partecipanti.remove(iduser);
-                    mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
-                    getDBData(iduser,idevento);
-                }
-            }
-        });
+            });
+        }catch (Exception e){
+            System.out.println("Problemi con file...");
+        }
+
 
     }
 
@@ -173,7 +223,7 @@ public class EventsingoloFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 SportEvent sportevent = dataSnapshot.getValue(SportEvent.class);
-                rendering(sportevent.getEventname(),sportevent.getEventplace(),sportevent.getEventsport(),sportevent.getEventdate(),sportevent.getEventhour(),sportevent.getEventprice(),sportevent.getEventplayersnumber(),sportevent.getEventnumberofplayers(),iduser,idevento);
+                rendering(sportevent,iduser,idevento);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -183,9 +233,11 @@ public class EventsingoloFragment extends Fragment {
     }
 
     public void listUserEvent(ArrayList<User> userList){
-        //ListView myListView = new ListView(getActivity().getApplicationContext());
-        ListView myListView = getActivity().findViewById(R.id.listviewexp);
-        ListUserAdapter adapter = new ListUserAdapter(getActivity().getApplicationContext(), R.layout.user_list_element, userList);
-        myListView.setAdapter(adapter);
+
+        LinearLayoutManager layoutManager= new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerviewusers);
+        RVAdapterUser rvadapteruser=new RVAdapterUser(userList);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(rvadapteruser);
     }
 }

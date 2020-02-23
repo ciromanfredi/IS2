@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.content.Intent;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -55,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     public void  checkautenticazione(FirebaseUser account){
         if(account != null){
             //Toast.makeText(this,"Loggato con successo",Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this,MainActivity.class));
+            //startActivity(new Intent(this,MainActivity.class));
         }else {
             //Toast.makeText(this,"Non Loggato",Toast.LENGTH_LONG).show();
         }
