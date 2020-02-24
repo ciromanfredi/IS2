@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class EventsFragment extends Fragment {
 
@@ -44,6 +45,7 @@ public class EventsFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
+    ArrayList<SportEvent> listaFiltrata;
     ArrayAdapter<SportEvent> adapter;
 
     @Override
@@ -94,6 +96,8 @@ public class EventsFragment extends Fragment {
 
         dati = new ArrayList<>();
 
+        listaFiltrata = new ArrayList<>();
+
         sportEvents.addValueEventListener(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
@@ -104,10 +108,16 @@ public class EventsFragment extends Fragment {
                     if (dataSnapshot.hasChildren()) {
                         //System.out.println("Sono dentro figlio: " + ds.getValue());
                         String key=ds.getKey();
+                        Map<String,SportEvent> ListaEventi = (Map<String, SportEvent>) ds.getValue();
+                        System.out.println("LISTA EVENTI"+ListaEventi);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
+                        if(ListaEventi.containsValue("Soccer")){
+                            listaFiltrata.add(sportevent);
+                        }
                         dati.add(key);
                         list.add(sportevent);
                     }
+
                 }
                 RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
                 rv.setAdapter(adapter);
