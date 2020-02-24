@@ -341,11 +341,8 @@
             android:layout_marginStart="133dp"
             android:layout_marginLeft="60dp"
             android:layout_marginTop="51dp"
-            android:onClick="handleImageClick"
             app:civ_border_color="#FF000000"
             app:civ_border_width="2dp" />
-
-        <!--android:src="@drawable/will"-->
 
     </RelativeLayout>
 </ScrollView>
