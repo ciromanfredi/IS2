@@ -1,6 +1,5 @@
 package com.example.is2.RVAdapter;
 
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +7,7 @@ import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
 import java.util.ArrayList;
@@ -29,8 +29,11 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
 
     @Override
     public void onBindViewHolder(UserViewHolder userViewHolder,final int i) {
-        //userViewHolder.imageview.setImageBitmap(users.get(i).getBitmap());
-        System.out.println("[RVAdapterUser] getBitmap: "+users.get(i).getBitmap());
+        System.out.println("[RVAdapterUser] getBitmap: "+users.get(i).getUrimmagine());
+        Glide.with(userViewHolder.imageview)
+                .load(users.get(i).getUrimmagine())
+                .into(userViewHolder.imageview);
+
 /*        userViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

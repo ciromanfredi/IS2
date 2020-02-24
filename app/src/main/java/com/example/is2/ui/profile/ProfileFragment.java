@@ -123,17 +123,34 @@ public class ProfileFragment extends Fragment {
         img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
         btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser userfire = FirebaseAuth.getInstance().getCurrentUser();
 
 
-        if (user != null) {
+        if (userfire != null) {
             // Name, email address, and profile photo Url
-            System.out.println("USER PHOTO URL"+user.getPhotoUrl());
+            /*
             if (user.getPhotoUrl() != null) {
+                System.out.println("Url photo: "+user.getPhotoUrl());
                 Glide.with(this)
                         .load(user.getPhotoUrl())
                         .into(img_Profilo);
             }
+            */
+
+            FirebaseStorage.getInstance().getReference().child("uploads/"+userfire.getUid()+".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(getActivity())
+                            .load(uri)
+                            .into(img_Profilo);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    System.out.println("[ProfileFragment] eccezione");
+                }
+            });
 
 
         }
@@ -146,13 +163,12 @@ public class ProfileFragment extends Fragment {
 
         });
 
-        FirebaseUser userfirebase = FirebaseAuth.getInstance().getCurrentUser();
-        users = FirebaseDatabase.getInstance().getReference("Users").child(userfirebase.getUid());
+        users = FirebaseDatabase.getInstance().getReference("Users").child(userfire.getUid());
 
         users.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("numero figli" + dataSnapshot.getChildrenCount());
+                System.out.println("[ProfileFragment] numero figli (users): " + dataSnapshot.getChildrenCount());
                 userobj = dataSnapshot.getValue(User.class);
                 System.out.println(userobj.getEmail());
 
@@ -171,10 +187,6 @@ public class ProfileFragment extends Fragment {
                 profilo_citta.setText(userobj.getCitta());
                 TextView profilo_username = getActivity().findViewById(R.id.profile_username);
                 profilo_username.setText(userobj.getUsername());
-
-
-
-
 
             }
 

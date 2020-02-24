@@ -31,8 +31,6 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback {
     View mView;
     SupportMapFragment mapFragment;
 
-    private AroundmeViewModel aroundmeViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 

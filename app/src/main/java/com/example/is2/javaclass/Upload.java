@@ -1,4 +1,4 @@
-package com.example.is2;
+package com.example.is2.javaclass;
 
 
 public class Upload {
