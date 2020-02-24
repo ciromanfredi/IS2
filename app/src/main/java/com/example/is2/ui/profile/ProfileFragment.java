@@ -128,6 +128,7 @@ public class ProfileFragment extends Fragment {
 
         if (user != null) {
             // Name, email address, and profile photo Url
+            System.out.println("USER PHOTO URL"+user.getPhotoUrl());
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
                         .load(user.getPhotoUrl())
