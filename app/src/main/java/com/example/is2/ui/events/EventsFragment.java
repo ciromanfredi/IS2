@@ -1,10 +1,17 @@
-
 package com.example.is2.ui.events;
+
+import com.example.is2.AddEventActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.is2.R;
-import com.example.is2.RVAdapter;
+import com.example.is2.RVAdapter.RVAdapterSportEvent;
 import com.example.is2.javaclass.SportEvent;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +45,28 @@ public class EventsFragment extends Fragment {
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
     ArrayAdapter<SportEvent> adapter;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.event_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.create_event){
+            Intent intent = new Intent(getActivity().getApplicationContext(), AddEventActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -71,19 +100,16 @@ public class EventsFragment extends Fragment {
                 System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
                 //Map<String, User> dati=dataSnapshot.getValue(Map<String.class,User.class>));
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
-                    System.out.println("DS"+ds);
+                    //System.out.println("DS"+ds);
                     if (dataSnapshot.hasChildren()) {
-                        System.out.println("Sono dentro figlio: " + ds.getValue());
+                        //System.out.println("Sono dentro figlio: " + ds.getValue());
                         String key=ds.getKey();
                         SportEvent sportevent = ds.getValue(SportEvent.class);
                         dati.add(key);
                         list.add(sportevent);
-                        System.out.println(sportevent.getEventname());
-                        System.out.println(sportevent);
                     }
                 }
-                RVAdapter adapter = new RVAdapter(list);
-//                adapter.setRVAdapterfa(getActivity());
+                RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
                 rv.setAdapter(adapter);
             }
 

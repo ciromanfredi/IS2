@@ -14,9 +14,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -52,6 +55,7 @@ public class ProfileFragment extends Fragment {
 
     private static final int THUMBNAIL_SIZE = 3 ;
     //private ProfileViewModel profileViewModel;
+    Button logout_btn;
     TextView c_nome;
     DatabaseReference users;
     User userobj=null;
@@ -64,6 +68,32 @@ public class ProfileFragment extends Fragment {
 
     private static final int PICK_IMAGE = 100;
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.user_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.logout){
+            Toast.makeText(getActivity(),"Logout", Toast.LENGTH_SHORT).show();
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.signOut();
+            getActivity().finish();
+            Intent logout_int = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+            startActivity(logout_int);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -115,7 +145,6 @@ public class ProfileFragment extends Fragment {
         });
 
         FirebaseUser userfirebase = FirebaseAuth.getInstance().getCurrentUser();
-
         users = FirebaseDatabase.getInstance().getReference("Users").child(userfirebase.getUid());
 
         users.addValueEventListener(new ValueEventListener() {
@@ -153,6 +182,20 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        /*Button modificabtn = getActivity().findViewById(R.id.modifica);
+        modificabtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ModProfileActivity.class);
+                intent.putExtra("username", userobj.getUsername()); //Optional parameters
+                intent.putExtra("nome", userobj.getNome()); //Optional parameters
+                intent.putExtra("cognome", userobj.getCognome()); //Optional parameters
+                intent.putExtra("telefono", userobj.getTelefono()); //Optional parameters
+                intent.putExtra("citta", userobj.getCitta()); //Optional parameters
+                intent.putExtra("preferenze",userobj.getPreferenze());
+                v.getContext().startActivity(intent);
+            }
+        });*/
     }
 
 
