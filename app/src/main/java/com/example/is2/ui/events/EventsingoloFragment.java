@@ -1,7 +1,6 @@
 package com.example.is2.ui.events;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterUser;
 import com.example.is2.javaclass.SportEvent;
@@ -31,20 +31,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class EventsingoloFragment extends Fragment {
 
     DatabaseReference databaseSportEvents;
     DatabaseReference databaseUsers;
-    FirebaseStorage storage;
     StorageReference storageRef;
     public EventsingoloFragment() {
         // Required empty public constructor
@@ -67,10 +62,9 @@ public class EventsingoloFragment extends Fragment {
 
         final String idevento=getArguments().getString("idevento");
         System.out.println("id evento"+idevento+" id user"+iduser);
-        databaseSportEvents = FirebaseDatabase.getInstance().getReference("SportEvents");
 
-        storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
+        databaseSportEvents = FirebaseDatabase.getInstance().getReference("SportEvents");
+        storageRef = FirebaseStorage.getInstance().getReference();
 
         getDBData(iduser,idevento);
 
@@ -140,7 +134,6 @@ public class EventsingoloFragment extends Fragment {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
                     //System.out.println("Datasnapshot: "+dataSnapshot);
                     //System.out.println("Num Children: "+dataSnapshot.getChildrenCount());
                     int i=0;
@@ -154,29 +147,15 @@ public class EventsingoloFragment extends Fragment {
                             System.out.println("Inizio a scaricare la foto per l'utente: "+user.getEmail());
 
                             try{
-                                final File localFile = File.createTempFile("images", "png");
-                                System.out.println("Scarico storage da: "+singleSnapshot.getKey());
-                                storageRef.child(singleSnapshot.getKey()+".png");
-                                //storageRef.child("uploads/1582456976096.jpg");
-                                System.out.println("getname"+storageRef);
-                                storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
 
+                                System.out.println("Scarico storage da: "+singleSnapshot.getKey());
+                                storageRef.child("uploads").child(singleSnapshot.getKey()+".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
-                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                        System.out.println("Tutto con successo per l'utente: "+user.getEmail());
-                                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                                        System.out.println(localFile.getAbsolutePath());
-                                        user.setBitmap(bitmap);
-                                        System.out.println(bitmap);
-                                        System.out.println("Aggiungo utente: "+user.getEmail());
+                                    public void onSuccess(Uri uri) {
+                                        System.out.println("Uri: "+uri);
+                                        user.setUrimmagine(uri);
                                         partecipantiObj.add(user);
-                                        //++i;
-                                        //if(i==dataSnapshot.getChildrenCount()) {
                                         if(partecipantiObj.size()==partecipanti.size()) {
-                                         /*
-                                            System.out.println("Sto per rilasciare");
-                                            System.out.println("Rilasciato");
-                                          */
                                             System.out.println("Sottometto lista");
                                             listUserEvent(partecipantiObj);
                                         }
@@ -187,6 +166,7 @@ public class EventsingoloFragment extends Fragment {
                                         System.out.println("debug here");
                                     }
                                 });
+
                             }catch(Exception e){
                                 e.printStackTrace();
                             }
@@ -206,12 +186,9 @@ public class EventsingoloFragment extends Fragment {
             final boolean eventfull=(numbercurrentpartecipanti==Integer.parseInt(numbermaxpartecipanti));
 
             final boolean partecipa;
-            if (partecipanti.contains(iduser))
-                partecipa = true;
-            else
-                partecipa = false;
+        partecipa = partecipanti.contains(iduser);
 
-            final Button button = (Button) getActivity().findViewById(R.id.button);
+            final Button button = getActivity().findViewById(R.id.button);
             if (partecipa)
                 button.setText("Abbandona");
             else
@@ -267,13 +244,45 @@ public class EventsingoloFragment extends Fragment {
     public void listUserEvent(ArrayList<User> userList){
 
         LinearLayoutManager layoutManager= new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerviewusers);
+        RecyclerView mRecyclerView = getActivity().findViewById(R.id.recyclerviewusers);
         RVAdapterUser rvadapteruser=new RVAdapterUser(userList);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(rvadapteruser);
     }
 
-    public void downloadphotopartecipanti(String child, final User user){
-    }
-
 }
+
+/*
+                                storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
+                                    @Override
+                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                        System.out.println("Tutto con successo per l'utente: "+user.getEmail());
+                                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                                        System.out.println(localFile.getAbsolutePath());
+                                        user.setBitmap(bitmap);
+                                        System.out.println(bitmap);
+                                        System.out.println("Aggiungo utente: "+user.getEmail());
+                                        partecipantiObj.add(user);
+                                        //++i;
+                                        //if(i==dataSnapshot.getChildrenCount()) {
+                                        if(partecipantiObj.size()==partecipanti.size()) {
+                                            System.out.println("Sottometto lista");
+                                            listUserEvent(partecipantiObj);
+                                        }
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        System.out.println("debug here");
+                                    }
+                                });
+
+                                                                //storageRef.child(singleSnapshot.getKey()+".png");
+                                //storageRef.child("uploads/1582456976096.jpg");
+                               // System.out.println("url donwload"+storageRef.get);
+/*                                Glide.with(getActivity())
+                                        .load(user.getPhotoUrl())
+                                        .into(img_Profilo);
+                                         */
+//final File localFile = File.createTempFile("images", "png");

@@ -67,7 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final String email = c_email.getText().toString().trim();
+               final String email = c_email.getText().toString().trim();
                final String password = c_password.getText().toString().trim();
                final String confermapassword = c_confermapassword.getText().toString().trim();
                final String username = c_username.getText().toString().trim();
