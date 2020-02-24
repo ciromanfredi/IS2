@@ -30,7 +30,7 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
     @Override
     public void onBindViewHolder(UserViewHolder userViewHolder,final int i) {
         //userViewHolder.imageview.setImageBitmap(users.get(i).getBitmap());
-        System.out.println("Sono qui"+users.get(i).getBitmap());
+        System.out.println("[RVAdapterUser] getBitmap: "+users.get(i).getBitmap());
 /*        userViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

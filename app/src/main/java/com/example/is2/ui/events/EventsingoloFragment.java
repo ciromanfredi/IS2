@@ -37,12 +37,15 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class EventsingoloFragment extends Fragment {
 
-    DatabaseReference mDatabase;
+    DatabaseReference databaseSportEvents;
+    DatabaseReference databaseUsers;
     FirebaseStorage storage;
-
+    StorageReference storageRef;
     public EventsingoloFragment() {
         // Required empty public constructor
     }
@@ -64,13 +67,17 @@ public class EventsingoloFragment extends Fragment {
 
         final String idevento=getArguments().getString("idevento");
         System.out.println("id evento"+idevento+" id user"+iduser);
-        mDatabase = FirebaseDatabase.getInstance().getReference("SportEvents");
+        databaseSportEvents = FirebaseDatabase.getInstance().getReference("SportEvents");
+
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
         getDBData(iduser,idevento);
 
     }
 
     public void rendering(SportEvent sportevent, final String iduser, final String idevento){
-        System.out.println(sportevent);
+        System.out.println("Inizio rendering oggetto... "+sportevent);
         String nome=sportevent.getEventname();
         String luogo=sportevent.getEventplace();
         String sport=sportevent.getEventsport();
@@ -125,42 +132,68 @@ public class EventsingoloFragment extends Fragment {
                 break;
         }
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users");
+        databaseUsers = FirebaseDatabase.getInstance().getReference("Users");
         final ArrayList<User> partecipantiObj=new ArrayList<>();
-        System.out.println("non va"+partecipantiObj.size());
-        storage = FirebaseStorage.getInstance();
-        final StorageReference storageRef = storage.getReferenceFromUrl("gs://is-2-268215.appspot.com").child("imagepdf.png");
+        System.out.println("Lista size..."+partecipantiObj.size());
+        listUserEvent(partecipantiObj);
+            databaseUsers.addListenerForSingleValueEvent(new ValueEventListener() {
 
-        try {
-            final File localFile = File.createTempFile("images", "png");
-            database.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    System.out.println(dataSnapshot+"dsdd"+dataSnapshot.getChildrenCount());
+
+                    //System.out.println("Datasnapshot: "+dataSnapshot);
+                    //System.out.println("Num Children: "+dataSnapshot.getChildrenCount());
+                    int i=0;
+
                     for (final DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                        System.out.println("hey tu");
-                        System.out.println(singleSnapshot);
-                        if(partecipanti.contains(singleSnapshot.getKey())){
+                        System.out.println("i: "+i);
+                        //System.out.println(singleSnapshot);
+                        if (partecipanti.contains(singleSnapshot.getKey())) {
+                            final User user=singleSnapshot.getValue(User.class);
+                            System.out.println("user->nome: "+user.getNome());
+                            System.out.println("Inizio a scaricare la foto per l'utente: "+user.getEmail());
+
+                            try{
+                                final File localFile = File.createTempFile("images", "png");
+                                System.out.println("Scarico storage da: "+singleSnapshot.getKey());
+                                storageRef.child(singleSnapshot.getKey()+".png");
+                                //storageRef.child("uploads/1582456976096.jpg");
+                                System.out.println("getname"+storageRef);
                                 storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
                                     @Override
                                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                        System.out.println("Tutto con successo");
+                                        System.out.println("Tutto con successo per l'utente: "+user.getEmail());
                                         Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                                        User user = singleSnapshot.getValue(User.class);
+                                        System.out.println(localFile.getAbsolutePath());
                                         user.setBitmap(bitmap);
+                                        System.out.println(bitmap);
+                                        System.out.println("Aggiungo utente: "+user.getEmail());
                                         partecipantiObj.add(user);
-                                        System.out.println("sonoquiiiiiii " + partecipantiObj);
+                                        //++i;
+                                        //if(i==dataSnapshot.getChildrenCount()) {
+                                        if(partecipantiObj.size()==partecipanti.size()) {
+                                         /*
+                                            System.out.println("Sto per rilasciare");
+                                            System.out.println("Rilasciato");
+                                          */
+                                            System.out.println("Sottometto lista");
+                                            listUserEvent(partecipantiObj);
+                                        }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception exception) {
-                                        System.out.println("OnFailureListener Debug");
+                                        System.out.println("debug here");
                                     }
                                 });
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+
                         }
+
                     }
-                    System.out.println("aggiorno visuale di "+partecipantiObj.size());
-                    listUserEvent(partecipantiObj);
                 }
 
                 @Override
@@ -168,6 +201,7 @@ public class EventsingoloFragment extends Fragment {
                     Log.e("EventsingoloFragment", "onCancelled", databaseError.toException());
                 }
             });
+
 
             final boolean eventfull=(numbercurrentpartecipanti==Integer.parseInt(numbermaxpartecipanti));
 
@@ -187,6 +221,7 @@ public class EventsingoloFragment extends Fragment {
                 button.setText("Evento Full!");
                 return;
             }
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -194,21 +229,18 @@ public class EventsingoloFragment extends Fragment {
                         if(!eventfull){
                             button.setText("Abbandona");
                             partecipanti.add(iduser);
-                            mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                            databaseSportEvents.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
                             getDBData(iduser,idevento);
                         }
                     }
                     else{
                         button.setText("Partecipa");
                         partecipanti.remove(iduser);
-                        mDatabase.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
+                        databaseSportEvents.child(idevento).child("eventnumberofplayers").setValue(partecipanti);
                         getDBData(iduser,idevento);
                     }
                 }
             });
-        }catch (Exception e){
-            System.out.println("Problemi con file...");
-        }
 
 
     }
@@ -240,4 +272,8 @@ public class EventsingoloFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(rvadapteruser);
     }
+
+    public void downloadphotopartecipanti(String child, final User user){
+    }
+
 }

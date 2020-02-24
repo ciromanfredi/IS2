@@ -100,15 +100,13 @@ public class EventsFragment extends Fragment {
                 System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
                 //Map<String, User> dati=dataSnapshot.getValue(Map<String.class,User.class>));
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
-                    System.out.println("DS"+ds);
+                    //System.out.println("DS"+ds);
                     if (dataSnapshot.hasChildren()) {
-                        System.out.println("Sono dentro figlio: " + ds.getValue());
+                        //System.out.println("Sono dentro figlio: " + ds.getValue());
                         String key=ds.getKey();
                         SportEvent sportevent = ds.getValue(SportEvent.class);
                         dati.add(key);
                         list.add(sportevent);
-                        System.out.println(sportevent.getEventname());
-                        System.out.println(sportevent);
                     }
                 }
                 RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
