@@ -1,11 +1,6 @@
-package com.example.is2.ui.events;
-import com.example.is2.LoginActivity;
-import com.example.is2.MainActivity;
-import com.example.is2.RVAdapter;
 
-import android.content.Intent;
+package com.example.is2.ui.events;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.is2.R;
+import com.example.is2.RVAdapter;
 import com.example.is2.javaclass.SportEvent;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
