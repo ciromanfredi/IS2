@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.is2.LoginActivity;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
 import com.google.android.gms.tasks.OnFailureListener;
