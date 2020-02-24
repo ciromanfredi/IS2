@@ -1,15 +1,19 @@
 package com.example.is2.RVAdapter;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
+import com.example.is2.ui.events.EventsFragment;
+
 import java.util.ArrayList;
 
 public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHolder>{
@@ -34,18 +38,14 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
                 .load(users.get(i).getUrimmagine())
                 .into(userViewHolder.imageview);
 
-/*        userViewHolder.view.setOnClickListener(new View.OnClickListener() {
+        userViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 Bundle b= new Bundle();
-                b.putString("idevento", EventsFragment.getDati().get(i));
-                Navigation.findNavController(v).navigate(R.id.action_navigation_event_singolo,b);
-
-
+                b.putString("uidreq", users.get(i).getUid());
+                Navigation.findNavController(v).navigate(R.id.action_navigation_eventsingolo_to_navigation_profile,b);
             }
-        });*/
+        });
     }
 
     @Override
@@ -67,6 +67,7 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
             super(itemView);
             view = itemView;
             imageview=itemView.findViewById(R.id.immagine_user);
+
         }
 
     }

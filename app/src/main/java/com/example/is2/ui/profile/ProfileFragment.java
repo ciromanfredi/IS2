@@ -59,6 +59,7 @@ public class ProfileFragment extends Fragment {
     Button logout_btn;
     TextView c_nome;
     DatabaseReference users;
+    FirebaseUser userfire;
     User userobj=null;
     ImageView img_Profilo;
     Button btn_change;
@@ -109,35 +110,29 @@ public class ProfileFragment extends Fragment {
             }
         });
         */
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
-        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        userfire = FirebaseAuth.getInstance().getCurrentUser();
         return root;
     }
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String uidreq=userfire.getUid();
+        if(getArguments()!=null)
+            uidreq=getArguments().getString("uidreq");
 
+        boolean mostra=(uidreq==userfire.getUid());
 
 
         img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
         btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
 
-        FirebaseUser userfire = FirebaseAuth.getInstance().getCurrentUser();
+
 
 
         if (userfire != null) {
-            // Name, email address, and profile photo Url
-            /*
-            if (user.getPhotoUrl() != null) {
-                System.out.println("Url photo: "+user.getPhotoUrl());
-                Glide.with(this)
-                        .load(user.getPhotoUrl())
-                        .into(img_Profilo);
-            }
-            */
-
-            FirebaseStorage.getInstance().getReference().child("uploads/"+userfire.getUid()+".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            FirebaseStorage.getInstance().getReference().child("uploads/"+uidreq+".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
                     Glide.with(getActivity())
@@ -155,15 +150,20 @@ public class ProfileFragment extends Fragment {
 
         }
 
-        btn_change.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                openGallery();
-            }
+        if(mostra) {
+            btn_change.setVisibility(View.VISIBLE);
+            btn_change.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openGallery();
+                }
 
-        });
+            });
+        }
+        else
+            btn_change.setVisibility(View.GONE);
 
-        users = FirebaseDatabase.getInstance().getReference("Users").child(userfire.getUid());
+        users = FirebaseDatabase.getInstance().getReference("Users").child(uidreq);
 
         users.addValueEventListener(new ValueEventListener() {
             @Override

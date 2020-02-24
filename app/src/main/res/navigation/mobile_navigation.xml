@@ -29,6 +29,10 @@
     <fragment
         android:id="@+id/navigation_eventsingolo"
         android:name="com.example.is2.ui.events.EventsingoloFragment"
-        tools:layout="@layout/fragment_sport_event"/>
+        tools:layout="@layout/fragment_sport_event">
+        <action
+            android:id="@+id/action_navigation_eventsingolo_to_navigation_profile"
+            app:destination="@+id/navigation_profile" />
+    </fragment>
 
 </navigation>
