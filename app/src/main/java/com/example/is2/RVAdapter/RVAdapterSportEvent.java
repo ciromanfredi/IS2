@@ -43,11 +43,11 @@ public class RVAdapterSportEvent extends RecyclerView.Adapter<RVAdapterSportEven
     public void onBindViewHolder(SportEventViewHolder sportEventViewHolder,final int i) {
         if(sportEvents.get(i).getEventnumberofplayers().contains(userfire.getUid())) {
             sportEventViewHolder.cv.setCardBackgroundColor(Color.RED);
-            System.out.println("L'utente partecipa a: "+sportEvents.get(i).getEventname());
+            //System.out.println("L'utente partecipa a: "+sportEvents.get(i).getEventname());
         }
         else{
             sportEventViewHolder.cv.setCardBackgroundColor(Color.TRANSPARENT);
-            System.out.println("L'utente NOOON partecipa a: "+sportEvents.get(i).getEventname());
+            //System.out.println("L'utente NOOON partecipa a: "+sportEvents.get(i).getEventname());
         }
 
         sportEventViewHolder.sportevent_name.setText(sportEvents.get(i).getEventname());
@@ -83,7 +83,7 @@ public class RVAdapterSportEvent extends RecyclerView.Adapter<RVAdapterSportEven
             @Override
             public void onClick(View v) {
                 Bundle b= new Bundle();
-                b.putString("idevento", EventsFragment.getDati().get(i));
+                b.putString("idevento",sportEvents.get(i).getKey());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_event_singolo,b);
             }
         });

@@ -201,7 +201,7 @@ public class AddEventActivity extends AppCompatActivity {
 
                 try {
                     Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                    Address addresses = geocoder.getFromLocationName(indirizzo+citta,1).get(0);
+                    Address addresses = geocoder.getFromLocationName(indirizzo+", "+citta,1).get(0);
                     coordinate.add(addresses.getLatitude());
                     coordinate.add(addresses.getLongitude());
                 } catch (IOException e) {
@@ -211,10 +211,10 @@ public class AddEventActivity extends AppCompatActivity {
                 partecipanti.add(mAuth.getCurrentUser().getUid());
                 mDatabase.child("SportEvents").child(key).child("eventdate").setValue(data);
                 mDatabase.child("SportEvents").child(key).child("eventhour").setValue(time);
-                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo);
+                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo+","+citta);
                 mDatabase.child("SportEvents").child(key).child("eventsport").setValue(tipoEvento);
                 mDatabase.child("SportEvents").child(key).child("eventname").setValue(titolo);
-                mDatabase.child("SportEvents").child(key).child("eventowner").setValue("proprietario...");//mAuth.getCurrentUser().getUid()
+                mDatabase.child("SportEvents").child(key).child("eventowner").setValue(mAuth.getCurrentUser().getUid());
                 mDatabase.child("SportEvents").child(key).child("eventplayersnumber").setValue(maxPartecipanti);
                 mDatabase.child("SportEvents").child(key).child("eventprice").setValue(prezzo);
                 mDatabase.child("SportEvents").child(key).child("eventnumberofplayers").setValue(partecipanti);

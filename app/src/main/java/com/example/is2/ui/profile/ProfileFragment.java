@@ -43,21 +43,19 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 //import com.google.firebase.firestore.auth.User;
 
 public class ProfileFragment extends Fragment {
 
     private StorageReference mStorageRef;
-    private StorageTask mUploadTask;
-    private DatabaseReference mDatabaseRef;
-
     private static final String TAG = "ProfileFragment";
-
     private static final int THUMBNAIL_SIZE = 3 ;
     Button logout_btn;
     DatabaseReference users;
     FirebaseUser userfire;
-    User userobj=null;
+    //User userobj=null;
     ImageView img_Profilo;
     Button btn_change;
     Uri imageUri;
@@ -147,7 +145,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("[ProfileFragment] numero figli (users): " + dataSnapshot.getChildrenCount());
-                userobj = dataSnapshot.getValue(User.class);
+                User userobj = dataSnapshot.getValue(User.class);
 
                 TextView profilo_nome = getActivity().findViewById(R.id.profile_name);
                 profilo_nome.setText(userobj.getNome());
@@ -292,93 +290,3 @@ public class ProfileFragment extends Fragment {
     }
 }
 
-
-
-/*
-
-
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getActivity().getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    private void uploadFile() {
-        if (imageUri != null) {
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-                    + "." + getFileExtension(imageUri));
-                System.out.println("imageURIIIII" + imageUri);
-
-            mUploadTask = fileReference.putFile(imageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    //        mProgressBar.setProgress(0);
-                                }
-                            }, 500);
-
-                            Toast.makeText(getActivity(), "Upload successful", Toast.LENGTH_LONG).show();
-
-
-
-                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            final StorageReference reference = FirebaseStorage.getInstance().getReference()
-                                    .child("uploads")
-                                    .child(uid + ".jpeg");
-
-
-                            String prova ="aaaa";
-                            Upload upload = new Upload(prova, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-                            System.out.println("DOWNLOAD URI  " +  taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-                            //   taskSnapshot.getDownloadUrl().toString());
-                            System.out.println("ciaoooooooo");
-                            String uploadId = mDatabaseRef.push().getKey();
-                             System.out.println("KEYYY "+ uploadId);
-                            System.out.println("ciaoooo2");
-                            mDatabaseRef.child(uploadId).setValue(upload);
-
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                /*    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-
-        } else {
-            Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
-        }
-        return;
-    }
-
-
-    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        storageRef.child("users/me/profile.png").getDownloadUrl()
-            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-        @Override
-        public void onSuccess(Uri uri) {
-            // Got the download URL for 'users/me/profile.png'
-        })
-.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-
-}
-
-*/

@@ -44,16 +44,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-public class AroundmeFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener
+public class AroundmeFragment extends Fragment implements OnMapReadyCallback
 {
 
     private GoogleMap mMap;
     View mView;
     SupportMapFragment mapFragment;
     String TAG="MapFragment";
-    boolean permissionAccessCoarseLocationApproved;
+    boolean permissionAccessFineLocationApproved;
     FusedLocationProviderClient mFusedLocationProviderClient;
-    public static final int PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+    public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     @Nullable
     @Override
@@ -81,20 +81,18 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback, Go
 
         mapFragment.getMapAsync(this);
 
-        permissionAccessCoarseLocationApproved =
-                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+        permissionAccessFineLocationApproved =
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED;
 
-        if (permissionAccessCoarseLocationApproved) {
-            System.out.println("permissionAccessCoarseLocationApproved == true");
+        if (permissionAccessFineLocationApproved) {
+            System.out.println("Ho gia il permesso per coarse location");
 
         } else {
             // App doesn't have access to the device's location at all. Make full request
             // for permission.
-            ActivityCompat.requestPermissions(getActivity(), new String[] {
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                    },
-                    PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+            System.out.println("Non ho il permesso per fine location");
+            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
         return mView;
@@ -102,17 +100,33 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback, Go
 
     @Override
     public void onRequestPermissionsResult(int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults) {
-        permissionAccessCoarseLocationApproved = false;
+        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        System.out.println("onRequestPermissionsResult");
+        permissionAccessFineLocationApproved = false;
         switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION: {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                //System.out.println("DEBUG1");
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    permissionAccessCoarseLocationApproved = true;
+                if (grantResults.length > 0) {//System.out.println("DEBUG2");
+                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED){//System.out.println("DEBUG3");
+                        permissionAccessFineLocationApproved = true;
+                        mMap.setMyLocationEnabled(true);
+                        mFusedLocationProviderClient.getLastLocation()
+                                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        // Got last known location. In some rare situations this can be null.
+                                        if (location != null) {
+                                            // Logic to handle location object
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+                                        }
+                                    }
+                                });
+                    }
                 }
+                break;
             }
         }
-        //updateLocationUI();
     }
 
     @Override
@@ -124,26 +138,28 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback, Go
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
 
-        mFusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+        if(permissionAccessFineLocationApproved==true){
+            mMap.setMyLocationEnabled(true);
+            mFusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+                            }
                         }
-                    }
-                });
+                    });
+        }
 
         FirebaseDatabase.getInstance().getReference("SportEvents").addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
-                System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
+                //System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
-                    System.out.println("DS"+ds);
+                        //System.out.println("DS"+ds);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
                         if(sportevent.getCoordinate().get(0)!=null && sportevent.getCoordinate().get(1)!=null) {
                             mMap.addMarker(new MarkerOptions().position(new LatLng(sportevent.getCoordinate().get(0), sportevent.getCoordinate().get(1))).title(sportevent.getEventname()));
@@ -156,18 +172,6 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback, Go
 
             }
         });
-    }
-
-
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        return false;
     }
 
 }

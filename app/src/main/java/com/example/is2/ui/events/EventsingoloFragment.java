@@ -1,17 +1,15 @@
 package com.example.is2.ui.events;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterUser;
 import com.example.is2.javaclass.SportEvent;
@@ -47,7 +44,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class EventsingoloFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener{
+public class EventsingoloFragment extends Fragment implements OnMapReadyCallback{
 
     DatabaseReference databaseSportEvents;
     DatabaseReference databaseUsers;
@@ -94,8 +91,7 @@ public class EventsingoloFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        // Logic to handle location object
+
     }
 
     public void rendering(SportEvent sportevent, final String iduser, final String idevento){
@@ -268,16 +264,19 @@ public class EventsingoloFragment extends Fragment implements OnMapReadyCallback
                 }
                 else
                 {
-                    mFusedLocationProviderClient.getLastLocation()
-                            .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    // Got last known location. In some rare situations this can be null.
-                                    if (location != null) {
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+                    if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        mMap.setMyLocationEnabled(true);
+                        mFusedLocationProviderClient.getLastLocation()
+                                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        // Got last known location. In some rare situations this can be null.
+                                        if (location != null) {
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
                 }
                 rendering(sportevent,iduser,idevento);
             }
@@ -289,7 +288,6 @@ public class EventsingoloFragment extends Fragment implements OnMapReadyCallback
     }
 
     public void listUserEvent(ArrayList<User> userList){
-
         LinearLayoutManager layoutManager= new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         RecyclerView mRecyclerView = getActivity().findViewById(R.id.recyclerviewusers);
         RVAdapterUser rvadapteruser=new RVAdapterUser(userList);
@@ -297,13 +295,4 @@ public class EventsingoloFragment extends Fragment implements OnMapReadyCallback
         mRecyclerView.setAdapter(rvadapteruser);
     }
 
-    @Override
-    public boolean onMyLocationButtonClick() {
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-
-    }
 }
