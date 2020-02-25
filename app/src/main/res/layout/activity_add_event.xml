@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddEvent">
+    tools:context=".AddEventActivity">
 
     <TextView
         android:id="@+id/newEvent_title"
@@ -79,6 +79,7 @@
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/textView1"
         android:layout_toRightOf="@+id/textView1"
+        android:focusable="false"
         android:ems="10"
         android:hint="Enter Date" />
 
@@ -87,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
-
+        android:focusable="false"
         android:layout_marginStart="18dp"
         android:layout_marginLeft="18dp"
         android:layout_marginTop="9dp"

@@ -1,17 +1,19 @@
 package com.example.is2;
 
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity{
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,22 @@ public class MainActivity extends AppCompatActivity{
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
-        //System.out.println("appBarConfiguration: "+appBarConfiguration+" navController: "+navController);
-    }
 
+
+        navView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
+            @Override
+            public void onNavigationItemReselected(@NonNull MenuItem item) {
+
+                System.out.println("RE---SELECTED");
+
+                if (item.getItemId() == R.id.navigation_profile) {
+
+                    Bundle b = new Bundle();
+
+                    b.putString("uidreq", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment).navigate(R.id.navigation_profile, b);
+                }
+            }
+        });
+    }
 }
