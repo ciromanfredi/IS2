@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.is2.FilterEvents;
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterSportEvent;
 import com.example.is2.javaclass.SportEvent;
@@ -29,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 public class EventsFragment extends Fragment {
@@ -47,6 +50,7 @@ public class EventsFragment extends Fragment {
     ArrayList<SportEvent> list;
     ArrayList<SportEvent> listaFiltrata;
     ArrayAdapter<SportEvent> adapter;
+    ArrayList<String> preferenze;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,6 +71,10 @@ public class EventsFragment extends Fragment {
             Intent intent = new Intent(getActivity().getApplicationContext(), AddEventActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.filtra){
+            Intent intent = new Intent(getActivity().getApplicationContext(), FilterEvents.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -80,6 +88,11 @@ public class EventsFragment extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        preferenze = new ArrayList<>();
+
+
+        System.out.println("PREFERENZE FILTRI : "+preferenze);
 
 
         final RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv);
@@ -111,11 +124,23 @@ public class EventsFragment extends Fragment {
                         Map<String,SportEvent> ListaEventi = (Map<String, SportEvent>) ds.getValue();
                         System.out.println("LISTA EVENTI"+ListaEventi);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
-                        if(ListaEventi.containsValue("Soccer")){
-                            listaFiltrata.add(sportevent);
+                        if((getActivity().getIntent().getStringArrayListExtra("preferenze")!=null)) {
+                            preferenze=getActivity().getIntent().getStringArrayListExtra("preferenze");
+                            if(!preferenze.isEmpty()) {
+                                for (int i = 0; i < preferenze.size(); i++) {
+                                    if (ListaEventi.containsValue(preferenze.get(i))) {
+                                        dati.add(key);
+                                        list.add(sportevent);
+                                    }
+                                }
+                            }else {
+                                dati.add(key);
+                                list.add(sportevent);
+                            }
+                        }else {
+                            dati.add(key);
+                            list.add(sportevent);
                         }
-                        dati.add(key);
-                        list.add(sportevent);
                     }
 
                 }
