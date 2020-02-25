@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.is2.R;
 import com.example.is2.javaclass.User;
-import com.example.is2.ui.events.EventsFragment;
 
 import java.util.ArrayList;
 

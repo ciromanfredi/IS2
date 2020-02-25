@@ -44,6 +44,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 //import com.google.firebase.firestore.auth.User;
 
 public class ProfileFragment extends Fragment {
@@ -55,22 +57,16 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
 
     private static final int THUMBNAIL_SIZE = 3 ;
-    //private ProfileViewModel profileViewModel;
     Button logout_btn;
-    TextView c_nome;
     DatabaseReference users;
     FirebaseUser userfire;
     User userobj=null;
     ImageView img_Profilo;
     Button btn_change;
     Uri imageUri;
-    Context context;
-    Bitmap bitmap;
 
 
     private static final int PICK_IMAGE = 100;
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -99,18 +95,8 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        c_nome = getActivity().findViewById(R.id.nome);
-        View root = inflater.inflate(R.layout.fragment_profile, container, false);
-        /*
-        final TextView textView = root.findViewById(R.id.text_profile);
-        profileViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        */
 
+        View root = inflater.inflate(R.layout.fragment_profile, container, false);
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
         userfire = FirebaseAuth.getInstance().getCurrentUser();
         return root;
@@ -123,21 +109,19 @@ public class ProfileFragment extends Fragment {
             uidreq=getArguments().getString("uidreq");
 
         boolean mostra=(uidreq==userfire.getUid());
-
+        System.out.println("uidreq "+uidreq+" mostra "+mostra);
 
         img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
         btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
-
-
-
-
-        if (userfire != null) {
-            FirebaseStorage.getInstance().getReference().child("uploads/"+uidreq+".jpeg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        FirebaseStorage fs=FirebaseStorage.getInstance();
+        StorageReference sr= fs.getReference().child("uploads/"+uidreq+".jpeg");
+            sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
                 public void onSuccess(Uri uri) {
                     Glide.with(getActivity())
                             .load(uri)
                             .into(img_Profilo);
+                    System.out.println("getActivity"+getActivity()+" uri "+uri);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -148,20 +132,18 @@ public class ProfileFragment extends Fragment {
             });
 
 
-        }
-
-        if(mostra) {
-            btn_change.setVisibility(View.VISIBLE);
-            btn_change.setOnClickListener(new View.OnClickListener() {
+//        if(mostra) {
+//            btn_change.setVisibility(VISIBLE);
+           btn_change.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openGallery();
                 }
 
             });
-        }
-        else
-            btn_change.setVisibility(View.GONE);
+//        }
+//        else
+//            btn_change.setVisibility(GONE);
 
         users = FirebaseDatabase.getInstance().getReference("Users").child(uidreq);
 
@@ -170,13 +152,13 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("[ProfileFragment] numero figli (users): " + dataSnapshot.getChildrenCount());
                 userobj = dataSnapshot.getValue(User.class);
-                System.out.println(userobj.getEmail());
-
 
                 TextView profilo_nome = getActivity().findViewById(R.id.profile_name);
                 profilo_nome.setText(userobj.getNome());
+
                 TextView profilo_cognome = getActivity().findViewById(R.id.profile_surname);
                 profilo_cognome.setText(userobj.getCognome());
+
                 TextView profilo_email = getActivity().findViewById(R.id.profile_email);
                 profilo_email.setText(userobj.getEmail());
 
@@ -185,6 +167,7 @@ public class ProfileFragment extends Fragment {
 
                 TextView profilo_citta = getActivity().findViewById(R.id.profile_place);
                 profilo_citta.setText(userobj.getCitta());
+
                 TextView profilo_username = getActivity().findViewById(R.id.profile_username);
                 profilo_username.setText(userobj.getUsername());
 
@@ -192,24 +175,10 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                System.out.println("on cancelled");
             }
         });
 
-        /*Button modificabtn = getActivity().findViewById(R.id.modifica);
-        modificabtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ModProfileActivity.class);
-                intent.putExtra("username", userobj.getUsername()); //Optional parameters
-                intent.putExtra("nome", userobj.getNome()); //Optional parameters
-                intent.putExtra("cognome", userobj.getCognome()); //Optional parameters
-                intent.putExtra("telefono", userobj.getTelefono()); //Optional parameters
-                intent.putExtra("citta", userobj.getCitta()); //Optional parameters
-                intent.putExtra("preferenze",userobj.getPreferenze());
-                v.getContext().startActivity(intent);
-            }
-        });*/
     }
 
 
@@ -219,7 +188,6 @@ public class ProfileFragment extends Fragment {
             startActivityForResult(gallery, PICK_IMAGE);
         }
 
-       // startActivityForResult(gallery, PICK_IMAGE);
     }
 
     @Override
@@ -237,21 +205,7 @@ public class ProfileFragment extends Fragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                //System.out.println("ImageURI"+imageUri);
-                //img_Profilo.setImageURI(imageUri);
-
-
-
-                //Drawable d = new BitmapDrawable(getResources(), bitmap );
-                //  bitmap.compress(Bitmap.CompressFormat.JPEG, 10);
-                // uploadFile();
-
-
-
-           //     System.out.println("USER PHOTO URL :    "+ user.getPhotoUrl());
-
         }
-
 
     }
 
