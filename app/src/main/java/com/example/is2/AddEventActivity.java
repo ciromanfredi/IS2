@@ -122,7 +122,7 @@ public class AddEventActivity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                eText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                eText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                             }
                         }, year, month, day);
                 picker.show();
@@ -193,12 +193,12 @@ public class AddEventActivity extends AppCompatActivity {
 
                 String key = mDatabase.child("SportEvents").push().getKey();
                 partecipanti.add(mAuth.getCurrentUser().getUid());
-                mDatabase.child("SportEvents").child(key).child("sporteventdate").setValue(data);
-                mDatabase.child("SportEvents").child(key).child("sporteventhour").setValue(time);
-                mDatabase.child("SportEvents").child(key).child("sporteventplace").setValue(indirizzo);
-                mDatabase.child("SportEvents").child(key).child("sporteventsport").setValue(tipoEvento);
-                mDatabase.child("SportEvents").child(key).child("sporteventname").setValue(titolo);
-                mDatabase.child("SportEvents").child(key).child("sporteventowner").setValue(citta);
+                mDatabase.child("SportEvents").child(key).child("eventdate").setValue(data);
+                mDatabase.child("SportEvents").child(key).child("eventhour").setValue(time);
+                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo);
+                mDatabase.child("SportEvents").child(key).child("eventsport").setValue(tipoEvento);
+                mDatabase.child("SportEvents").child(key).child("eventname").setValue(titolo);
+                mDatabase.child("SportEvents").child(key).child("eventowner").setValue(citta);
                 mDatabase.child("SportEvents").child(key).child("eventplayersnumber").setValue(maxPartecipanti);
                 mDatabase.child("SportEvents").child(key).child("eventprice").setValue(prezzo);
                 mDatabase.child("SportEvents").child(key).child("eventnumberofplayers").setValue(partecipanti);
