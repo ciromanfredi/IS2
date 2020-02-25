@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -31,12 +33,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AddEventActivity extends AppCompatActivity {
@@ -49,8 +53,6 @@ public class AddEventActivity extends AppCompatActivity {
     String indirizzo,citta,data,time,prezzo,titolo;
     String maxPartecipanti;
     String userID;
-    ArrayList<String> partecipanti;
-
 
     TimePickerDialog pickerTime;
     DatePickerDialog picker;
@@ -62,8 +64,6 @@ public class AddEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
-
-        partecipanti = new ArrayList<>();
 
         // Initialize Firebase Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -192,22 +192,35 @@ public class AddEventActivity extends AppCompatActivity {
                 }
 
                 String key = mDatabase.child("SportEvents").push().getKey();
+                ArrayList<String> partecipanti = new ArrayList<>();
+                ArrayList<Double> coordinate = new ArrayList<>();
+
+                try {
+                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                    Address addresses = geocoder.getFromLocationName(indirizzo+citta,1).get(0);
+                    coordinate.add(addresses.getLatitude());
+                    coordinate.add(addresses.getLongitude());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 partecipanti.add(mAuth.getCurrentUser().getUid());
-                mDatabase.child("SportEvents").child(key).child("sporteventdate").setValue(data);
-                mDatabase.child("SportEvents").child(key).child("sporteventhour").setValue(time);
-                mDatabase.child("SportEvents").child(key).child("sporteventplace").setValue(indirizzo);
-                mDatabase.child("SportEvents").child(key).child("sporteventsport").setValue(tipoEvento);
-                mDatabase.child("SportEvents").child(key).child("sporteventname").setValue(titolo);
-                mDatabase.child("SportEvents").child(key).child("sporteventowner").setValue(citta);
+                mDatabase.child("SportEvents").child(key).child("eventdate").setValue(data);
+                mDatabase.child("SportEvents").child(key).child("eventhour").setValue(time);
+                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo);
+                mDatabase.child("SportEvents").child(key).child("eventsport").setValue(tipoEvento);
+                mDatabase.child("SportEvents").child(key).child("eventname").setValue(titolo);
+                mDatabase.child("SportEvents").child(key).child("eventowner").setValue("proprietario...");//mAuth.getCurrentUser().getUid()
                 mDatabase.child("SportEvents").child(key).child("eventplayersnumber").setValue(maxPartecipanti);
                 mDatabase.child("SportEvents").child(key).child("eventprice").setValue(prezzo);
                 mDatabase.child("SportEvents").child(key).child("eventnumberofplayers").setValue(partecipanti);
-
+                mDatabase.child("SportEvents").child(key).child("coordinate").setValue(coordinate);
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         }
         );
+
     }
 }

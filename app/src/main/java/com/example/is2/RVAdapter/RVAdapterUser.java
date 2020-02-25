@@ -66,9 +66,6 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
             super(itemView);
             view = itemView;
             imageview=itemView.findViewById(R.id.immagine_user);
-
         }
-
     }
-
 }

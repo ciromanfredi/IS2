@@ -1,5 +1,7 @@
 package com.example.is2.RVAdapter;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +16,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.is2.R;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.ui.events.EventsFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class RVAdapterSportEvent extends RecyclerView.Adapter<RVAdapterSportEvent.SportEventViewHolder>{
 
     public ArrayList<SportEvent> sportEvents;
+    public FirebaseUser userfire;
 
     public RVAdapterSportEvent(ArrayList<SportEvent> sportEvents){
         this.sportEvents = sportEvents;
@@ -30,11 +35,21 @@ public class RVAdapterSportEvent extends RecyclerView.Adapter<RVAdapterSportEven
     public SportEventViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_element, viewGroup, false);
         SportEventViewHolder pvh = new SportEventViewHolder(v);
+        userfire = FirebaseAuth.getInstance().getCurrentUser();
         return pvh;
     }
 
     @Override
     public void onBindViewHolder(SportEventViewHolder sportEventViewHolder,final int i) {
+        if(sportEvents.get(i).getEventnumberofplayers().contains(userfire.getUid())) {
+            sportEventViewHolder.cv.setCardBackgroundColor(Color.RED);
+            System.out.println("L'utente partecipa a: "+sportEvents.get(i).getEventname());
+        }
+        else{
+            sportEventViewHolder.cv.setCardBackgroundColor(Color.TRANSPARENT);
+            System.out.println("L'utente NOOON partecipa a: "+sportEvents.get(i).getEventname());
+        }
+
         sportEventViewHolder.sportevent_name.setText(sportEvents.get(i).getEventname());
         sportEventViewHolder.sportevent_luogo.setText(sportEvents.get(i).getEventplace());
         sportEventViewHolder.sportevent_ora.setText(sportEvents.get(i).getEventhour());

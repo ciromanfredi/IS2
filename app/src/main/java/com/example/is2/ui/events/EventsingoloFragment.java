@@ -1,11 +1,14 @@
 package com.example.is2.ui.events;
 
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +24,14 @@ import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterUser;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.javaclass.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,11 +47,17 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class EventsingoloFragment extends Fragment {
+public class EventsingoloFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener{
 
     DatabaseReference databaseSportEvents;
     DatabaseReference databaseUsers;
     StorageReference storageRef;
+    private GoogleMap mMap;
+    View mView;
+    SupportMapFragment mapFragment;
+    FusedLocationProviderClient mFusedLocationProviderClient;
+    SportEvent sportevent;
+
     public EventsingoloFragment() {
         // Required empty public constructor
     }
@@ -48,9 +65,13 @@ public class EventsingoloFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(
-                R.layout.fragment_sport_event, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sport_event, container, false);
         System.out.println("Debug onCreateView");
+
+        mapFragment=(SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.mapsingleevent);
+        mapFragment.getMapAsync(this);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
         return rootView;
     }
 
@@ -68,6 +89,13 @@ public class EventsingoloFragment extends Fragment {
 
         getDBData(iduser,idevento);
 
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
+        // Logic to handle location object
     }
 
     public void rendering(SportEvent sportevent, final String iduser, final String idevento){
@@ -232,7 +260,25 @@ public class EventsingoloFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                SportEvent sportevent = dataSnapshot.getValue(SportEvent.class);
+                sportevent = dataSnapshot.getValue(SportEvent.class);
+                if(sportevent.getCoordinate().get(0)!=null && sportevent.getCoordinate().get(1)!=null){
+                    final LatLng positionMarker = new LatLng(sportevent.getCoordinate().get(0),sportevent.getCoordinate().get(1));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionMarker,12));
+                    mMap.addMarker(new MarkerOptions().position(positionMarker).title(sportevent.getEventname()));
+                }
+                else
+                {
+                    mFusedLocationProviderClient.getLastLocation()
+                            .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+                                    }
+                                }
+                            });
+                }
                 rendering(sportevent,iduser,idevento);
             }
             @Override
@@ -251,39 +297,13 @@ public class EventsingoloFragment extends Fragment {
         mRecyclerView.setAdapter(rvadapteruser);
     }
 
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+
+    }
 }
-
-/*
-                                storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-
-                                    @Override
-                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                        System.out.println("Tutto con successo per l'utente: "+user.getEmail());
-                                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                                        System.out.println(localFile.getAbsolutePath());
-                                        user.setBitmap(bitmap);
-                                        System.out.println(bitmap);
-                                        System.out.println("Aggiungo utente: "+user.getEmail());
-                                        partecipantiObj.add(user);
-                                        //++i;
-                                        //if(i==dataSnapshot.getChildrenCount()) {
-                                        if(partecipantiObj.size()==partecipanti.size()) {
-                                            System.out.println("Sottometto lista");
-                                            listUserEvent(partecipantiObj);
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        System.out.println("debug here");
-                                    }
-                                });
-
-                                                                //storageRef.child(singleSnapshot.getKey()+".png");
-                                //storageRef.child("uploads/1582456976096.jpg");
-                               // System.out.println("url donwload"+storageRef.get);
-/*                                Glide.with(getActivity())
-                                        .load(user.getPhotoUrl())
-                                        .into(img_Profilo);
-                                         */
-//final File localFile = File.createTempFile("images", "png");

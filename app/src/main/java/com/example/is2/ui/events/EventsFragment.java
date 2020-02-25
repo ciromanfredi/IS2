@@ -24,6 +24,8 @@ import com.example.is2.FilterEvents;
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterSportEvent;
 import com.example.is2.javaclass.SportEvent;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,7 +50,6 @@ public class EventsFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
-    ArrayList<SportEvent> listaFiltrata;
     ArrayAdapter<SportEvent> adapter;
     ArrayList<String> preferenze;
 
@@ -91,9 +92,7 @@ public class EventsFragment extends Fragment {
 
         preferenze = new ArrayList<>();
 
-
         System.out.println("PREFERENZE FILTRI : "+preferenze);
-
 
         final RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv);
 
@@ -109,9 +108,7 @@ public class EventsFragment extends Fragment {
 
         dati = new ArrayList<>();
 
-        listaFiltrata = new ArrayList<>();
-
-        sportEvents.addValueEventListener(new ValueEventListener(){
+        sportEvents.addListenerForSingleValueEvent(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
                 System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
@@ -142,7 +139,6 @@ public class EventsFragment extends Fragment {
                             list.add(sportevent);
                         }
                     }
-
                 }
                 RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
                 rv.setAdapter(adapter);

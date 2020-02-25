@@ -132,18 +132,17 @@ public class ProfileFragment extends Fragment {
             });
 
 
-//        if(mostra) {
-//            btn_change.setVisibility(VISIBLE);
-           btn_change.setOnClickListener(new View.OnClickListener() {
+        if(mostra) {
+            btn_change.setVisibility(VISIBLE);
+            btn_change.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openGallery();
                 }
-
             });
-//        }
-//        else
-//            btn_change.setVisibility(GONE);
+          }
+        else
+            btn_change.setVisibility(GONE);
 
         users = FirebaseDatabase.getInstance().getReference("Users").child(uidreq);
 
