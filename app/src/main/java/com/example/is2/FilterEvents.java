@@ -8,8 +8,6 @@ import android.widget.CheckBox;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.is2.ui.events.EventsFragment;
-
 import java.util.ArrayList;
 
 public class FilterEvents extends AppCompatActivity implements View.OnClickListener {

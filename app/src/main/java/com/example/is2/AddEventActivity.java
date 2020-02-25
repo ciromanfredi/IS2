@@ -53,6 +53,8 @@ public class AddEventActivity extends AppCompatActivity {
     String indirizzo,citta,data,time,prezzo,titolo;
     String maxPartecipanti;
     String userID;
+    ArrayList<String> partecipanti;
+
 
     TimePickerDialog pickerTime;
     DatePickerDialog picker;
@@ -64,6 +66,8 @@ public class AddEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
+
+        partecipanti = new ArrayList<>();
 
         // Initialize Firebase Database
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -122,7 +126,7 @@ public class AddEventActivity extends AppCompatActivity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                eText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                eText.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
                             }
                         }, year, month, day);
                 picker.show();
@@ -221,6 +225,5 @@ public class AddEventActivity extends AppCompatActivity {
             }
         }
         );
-
     }
 }

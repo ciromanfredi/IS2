@@ -43,6 +43,7 @@ public class RVAdapterUser extends RecyclerView.Adapter<RVAdapterUser.UserViewHo
                 Bundle b= new Bundle();
                 b.putString("uidreq", users.get(i).getUid());
                 Navigation.findNavController(v).navigate(R.id.action_navigation_eventsingolo_to_navigation_profile,b);
+
             }
         });
     }

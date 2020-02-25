@@ -1,12 +1,16 @@
 package com.example.is2.javaclass;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class SportEvent {
 
+    private String key;
     private String eventdate;
     private String eventhour;
     private String eventname;
@@ -23,9 +27,9 @@ public class SportEvent {
     }
 
     public ArrayList<Double> getCoordinate() {
-        if(coordinate!=null)
+        if (coordinate != null)
             return coordinate;
-        ArrayList<Double> notPresent=new ArrayList<Double>();
+        ArrayList<Double> notPresent = new ArrayList<Double>();
         notPresent.add(null);
         notPresent.add(null);
         return notPresent;
@@ -98,6 +102,10 @@ public class SportEvent {
     public void setEventsport(String eventsport) {
         this.eventsport = eventsport;
     }
+
+    public void setKey(String key){this.key=key;}
+
+    public String getKey(){return key;}
 
     public ArrayList<String> getEventnumberofplayers() {
         if(eventnumberofplayers!=null)

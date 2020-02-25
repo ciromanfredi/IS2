@@ -1,6 +1,5 @@
 package com.example.is2.ui.profile;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -44,8 +43,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_OK;
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 //import com.google.firebase.firestore.auth.User;
 
 public class ProfileFragment extends Fragment {
@@ -169,6 +166,34 @@ public class ProfileFragment extends Fragment {
 
                 TextView profilo_username = getActivity().findViewById(R.id.profile_username);
                 profilo_username.setText(userobj.getUsername());
+
+                String uidreq=userfire.getUid();
+                if(getArguments()!=null)
+                    uidreq=getArguments().getString("uidreq");
+
+                boolean mostra=(uidreq==userfire.getUid());
+                System.out.println("uidreq "+uidreq+" mostra "+mostra);
+
+                img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
+                btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
+                FirebaseStorage fs=FirebaseStorage.getInstance();
+                StorageReference sr= fs.getReference().child("uploads/"+uidreq+".jpeg");
+                sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Glide.with(getActivity())
+                                .load(uri)
+                                .into(img_Profilo);
+                        System.out.println("getActivity"+getActivity()+" uri "+uri);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle any errors
+                        System.out.println("[ProfileFragment] eccezione");
+                    }
+                });
+
 
             }
 
