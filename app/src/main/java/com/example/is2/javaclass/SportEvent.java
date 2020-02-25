@@ -19,13 +19,14 @@ public class SportEvent {
     private String eventprice;
     private String eventsport;
     private ArrayList<String> eventnumberofplayers;
+    private String key;
 
     public SportEvent(){
 
 
     }
 
-    public SportEvent(String eventdate,String eventhour,String eventname,String eventowner,String eventplace,String eventplayersnumber,String eventprice,String eventsport,ArrayList<String> eventnumberofplayers){
+    public SportEvent(String eventdate,String eventhour,String eventname,String eventowner,String eventplace,String eventplayersnumber,String eventprice,String eventsport,ArrayList<String> eventnumberofplayers, String key){
         this.eventdate=eventdate;
         this.eventhour=eventhour;
         this.eventname=eventname;
@@ -35,6 +36,7 @@ public class SportEvent {
         this.eventsport=eventsport;
         this.eventplayersnumber=eventplayersnumber;
         this.eventnumberofplayers=eventnumberofplayers;
+        this.key = key;
     }
 
     public String getEventdate() {
@@ -101,6 +103,10 @@ public class SportEvent {
         this.eventsport = eventsport;
     }
 
+    public void setKey(String key){this.key=key;}
+
+    public String getKey(){return key;}
+
     public ArrayList<String> getEventnumberofplayers() {
         if(eventnumberofplayers!=null)
             return eventnumberofplayers;
@@ -116,4 +122,5 @@ public class SportEvent {
             return eventnumberofplayers.size();
         return 0;
     }
+
 }

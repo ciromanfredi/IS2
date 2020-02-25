@@ -1,5 +1,7 @@
 package com.example.is2.ui.events;
 
+import com.example.is2.AddEventActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,16 +31,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Map;
 
 public class EventsFragment extends Fragment {
 
     private static final String TAG = "EventsFragment";
-    public static ArrayList<String> dati=null;
+    public static ArrayList<String> dati = null;
 
-    public static ArrayList<String> getDati()
-    {
+    public static ArrayList<String> getDati() {
         return dati;
     }
 
@@ -63,11 +73,11 @@ public class EventsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.create_event){
+        if (id == R.id.create_event) {
             Intent intent = new Intent(getActivity().getApplicationContext(), AddEventActivity.class);
             startActivity(intent);
         }
-        if (id == R.id.filtra){
+        if (id == R.id.filtra) {
             Intent intent = new Intent(getActivity().getApplicationContext(), FilterEvents.class);
             startActivity(intent);
         }
@@ -88,10 +98,10 @@ public class EventsFragment extends Fragment {
         preferenze = new ArrayList<>();
 
 
-        System.out.println("PREFERENZE FILTRI : "+preferenze);
+        System.out.println("PREFERENZE FILTRI : " + preferenze);
 
 
-        final RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv);
+        final RecyclerView rv = (RecyclerView) getActivity().findViewById(R.id.rv);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         //GridLayoutManager glm= new GridLayoutManager(this,10);
@@ -107,48 +117,84 @@ public class EventsFragment extends Fragment {
 
         listaFiltrata = new ArrayList<>();
 
-        sportEvents.addValueEventListener(new ValueEventListener(){
+        sportEvents.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot){
-                System.out.println("numero figli: "+dataSnapshot.getChildrenCount());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("numero figli: " + dataSnapshot.getChildrenCount());
                 //Map<String, User> dati=dataSnapshot.getValue(Map<String.class,User.class>));
-                for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     //System.out.println("DS"+ds);
                     if (dataSnapshot.hasChildren()) {
                         //System.out.println("Sono dentro figlio: " + ds.getValue());
-                        String key=ds.getKey();
-                        Map<String,SportEvent> ListaEventi = (Map<String, SportEvent>) ds.getValue();
-                        System.out.println("LISTA EVENTI"+ListaEventi);
+                        String key = ds.getKey();
+                        Map<String, SportEvent> ListaEventi = (Map<String, SportEvent>) ds.getValue();
+                        System.out.println("LISTA EVENTI" + ListaEventi);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
-                        if((getActivity().getIntent().getStringArrayListExtra("preferenze")!=null)) {
-                            preferenze=getActivity().getIntent().getStringArrayListExtra("preferenze");
-                            if(!preferenze.isEmpty()) {
+                        sportevent.setKey(key);
+                        if ((getActivity().getIntent().getStringArrayListExtra("preferenze") != null)) {
+                            preferenze = getActivity().getIntent().getStringArrayListExtra("preferenze");
+                            if (!preferenze.isEmpty()) {
                                 for (int i = 0; i < preferenze.size(); i++) {
                                     if (ListaEventi.containsValue(preferenze.get(i))) {
-                                        dati.add(key);
+                                        //dati.add(key);
                                         list.add(sportevent);
                                     }
                                 }
-                            }else {
-                                dati.add(key);
+                            } else {
+                                //dati.add(key);
                                 list.add(sportevent);
                             }
-                        }else {
-                            dati.add(key);
+                        } else {
+                            //dati.add(key);
                             list.add(sportevent);
                         }
                     }
 
+                }
+                try {
+                    ordinaData(list,dati);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
                 RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
                 rv.setAdapter(adapter);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError){
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
     }
+
+    static final Comparator<SportEvent> byDate = new Comparator<SportEvent>() {
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+        @Override
+        public int compare(SportEvent ord1, SportEvent ord2) {
+            String ev1 = ord1.getEventdate();
+            String ev2 = ord2.getEventdate();
+            Date d1 = null;
+            Date d2 = null;
+            try {
+                d1 = format.parse(ev1);
+                d2 = format.parse(ev2);
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+
+            //return (d1.getTime() > d2.getTime() ? -1 : 1);     //descending
+            return (d1.getTime() > d2.getTime() ? 1 : -1);     //ascending
+        }
+    };
+    public void ordinaData(ArrayList<SportEvent> listaeventi,ArrayList<String> dati) throws ParseException {
+        Collections.sort(listaeventi,byDate);
+        for(int i=0;i<listaeventi.size();i++){
+            dati.add(listaeventi.get(i).getKey());
+        }
+    }
+
 }
