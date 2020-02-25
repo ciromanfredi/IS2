@@ -143,6 +143,7 @@ public class EventsingoloFragment extends Fragment {
                         //System.out.println(singleSnapshot);
                         if (partecipanti.contains(singleSnapshot.getKey())) {
                             final User user=singleSnapshot.getValue(User.class);
+                            user.setUid(singleSnapshot.getKey());
                             System.out.println("user->nome: "+user.getNome());
                             System.out.println("Inizio a scaricare la foto per l'utente: "+user.getEmail());
 

@@ -20,6 +20,16 @@ public class User {
     public ArrayList<String> preferenze;
     public Uri urimmagine;
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String uid;
+
     public Uri getUrimmagine() {
         return urimmagine;
     }
