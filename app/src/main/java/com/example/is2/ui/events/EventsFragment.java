@@ -1,7 +1,5 @@
 package com.example.is2.ui.events;
 
-import com.example.is2.AddEventActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,13 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.is2.AddEventActivity;
+import com.example.is2.FilterEvents;
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterSportEvent;
 import com.example.is2.javaclass.SportEvent;
@@ -29,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class EventsFragment extends Fragment {
 
@@ -44,7 +44,9 @@ public class EventsFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference sportEvents;
     ArrayList<SportEvent> list;
+    ArrayList<SportEvent> listaFiltrata;
     ArrayAdapter<SportEvent> adapter;
+    ArrayList<String> preferenze;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +67,10 @@ public class EventsFragment extends Fragment {
             Intent intent = new Intent(getActivity().getApplicationContext(), AddEventActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.filtra){
+            Intent intent = new Intent(getActivity().getApplicationContext(), FilterEvents.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -78,6 +84,11 @@ public class EventsFragment extends Fragment {
 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        preferenze = new ArrayList<>();
+
+
+        System.out.println("PREFERENZE FILTRI : "+preferenze);
 
 
         final RecyclerView rv = (RecyclerView)getActivity().findViewById(R.id.rv);
@@ -94,6 +105,8 @@ public class EventsFragment extends Fragment {
 
         dati = new ArrayList<>();
 
+        listaFiltrata = new ArrayList<>();
+
         sportEvents.addValueEventListener(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot){
@@ -104,10 +117,28 @@ public class EventsFragment extends Fragment {
                     if (dataSnapshot.hasChildren()) {
                         //System.out.println("Sono dentro figlio: " + ds.getValue());
                         String key=ds.getKey();
+                        Map<String,SportEvent> ListaEventi = (Map<String, SportEvent>) ds.getValue();
+                        System.out.println("LISTA EVENTI"+ListaEventi);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
-                        dati.add(key);
-                        list.add(sportevent);
+                        if((getActivity().getIntent().getStringArrayListExtra("preferenze")!=null)) {
+                            preferenze=getActivity().getIntent().getStringArrayListExtra("preferenze");
+                            if(!preferenze.isEmpty()) {
+                                for (int i = 0; i < preferenze.size(); i++) {
+                                    if (ListaEventi.containsValue(preferenze.get(i))) {
+                                        dati.add(key);
+                                        list.add(sportevent);
+                                    }
+                                }
+                            }else {
+                                dati.add(key);
+                                list.add(sportevent);
+                            }
+                        }else {
+                            dati.add(key);
+                            list.add(sportevent);
+                        }
                     }
+
                 }
                 RVAdapterSportEvent adapter = new RVAdapterSportEvent(list);
                 rv.setAdapter(adapter);

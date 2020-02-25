@@ -1,6 +1,7 @@
 package com.example.is2.javaclass;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -17,14 +18,14 @@ public class User {
     public String telefono;
     public String citta;
     public ArrayList<String> preferenze;
-    public Bitmap bitmap;
+    public Uri urimmagine;
 
-    public Bitmap getBitmap() {
-        return bitmap;
+    public Uri getUrimmagine() {
+        return urimmagine;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+    public void setUrimmagine(Uri urimmagine) {
+        this.urimmagine = urimmagine;
     }
 
     public User(){

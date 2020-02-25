@@ -5,5 +5,9 @@
         android:id="@+id/create_event"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/create_event" />
+    <item
+        android:id="@+id/filtra"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Filtra" />
 
 </menu>

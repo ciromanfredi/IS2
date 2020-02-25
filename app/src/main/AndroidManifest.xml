@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".AddEventActivity"></activity>
-
-        <meta-data
+           <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key" />
 
@@ -29,8 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".LoginActivity"></activity>
         <activity android:name=".RegisterActivity" />
+        <activity android:name=".FilterEvents"/>
     </application>
 
 </manifest>
