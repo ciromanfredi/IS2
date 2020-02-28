@@ -103,7 +103,7 @@
         android:layout_marginLeft="156dp"
         android:layout_marginTop="264dp"
         android:text="cognome"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         app:layout_constraintStart_toEndOf="@+id/imagePerson"
         app:layout_constraintTop_toTopOf="parent" />
@@ -135,7 +135,7 @@
             android:layout_marginLeft="156dp"
             android:layout_marginTop="220dp"
             android:text="nome"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textStyle="italic"
             app:layout_constraintStart_toEndOf="@+id/imagePerson"
             app:layout_constraintTop_toTopOf="parent" />
@@ -178,7 +178,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="351dp"
         android:text="email"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         app:layout_constraintStart_toEndOf="@+id/imageEmail"
         app:layout_constraintTop_toTopOf="parent" />
@@ -233,7 +233,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="440dp"
         android:text="citta"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         app:layout_constraintStart_toEndOf="@+id/imagePosition"
         app:layout_constraintTop_toTopOf="parent" />
@@ -293,7 +293,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="530dp"
         android:text="telefono"
-        android:textSize="25dp"
+        android:textSize="20dp"
         android:textStyle="italic"
         app:layout_constraintStart_toEndOf="@+id/imagePhone"
         app:layout_constraintTop_toTopOf="parent" />

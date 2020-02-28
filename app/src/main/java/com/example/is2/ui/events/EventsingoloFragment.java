@@ -1,26 +1,40 @@
 package com.example.is2.ui.events;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.is2.R;
 import com.example.is2.RVAdapter.RVAdapterUser;
 import com.example.is2.javaclass.SportEvent;
 import com.example.is2.javaclass.User;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,26 +50,60 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class EventsingoloFragment extends Fragment {
+public class EventsingoloFragment extends Fragment  implements OnMapReadyCallback {
 
     DatabaseReference databaseSportEvents;
     DatabaseReference databaseUsers;
     StorageReference storageRef;
+    private GoogleMap mMap;
+    View mView;
+    SupportMapFragment mapFragment;
+    FusedLocationProviderClient mFusedLocationProviderClient;
+    SportEvent sportevent;
+
     public EventsingoloFragment() {
         // Required empty public constructor
+    }
+
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       // this.setHasOptionsMenu(true);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        System.out.println("on options item");
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+    //@Override
+    public void onBackPressed() {
+        System.out.println("on back pressed");
+        Navigation.findNavController(getActivity(), R.id.nav_host_fragment).navigate(R.id.action_navigation_eventsingolo_to_navigation_events);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(
-                R.layout.fragment_sport_event, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sport_event, container, false);
         System.out.println("Debug onCreateView");
+
+        mapFragment=(SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.mapsingleevent);
+        mapFragment.getMapAsync(this);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
         return rootView;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated( View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         final String iduser = user.getUid();
@@ -67,6 +115,31 @@ public class EventsingoloFragment extends Fragment {
         storageRef = FirebaseStorage.getInstance().getReference();
 
         getDBData(iduser,idevento);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        this.setHasOptionsMenu(true);
+
+       /*
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+                System.out.println("BackPressed");
+                //   Intent intent = new Intent(getActivity().onBackPressed(), EventsFragment.class);
+               // startActivity(intent);
+                Navigation.findNavController(view).navigate(R.id.action_navigation_eventsingolo_to_navigation_events);
+
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+        */
+
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
     }
 
@@ -232,7 +305,28 @@ public class EventsingoloFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                SportEvent sportevent = dataSnapshot.getValue(SportEvent.class);
+                sportevent = dataSnapshot.getValue(SportEvent.class);
+                if(sportevent.getCoordinate().get(0)!=null && sportevent.getCoordinate().get(1)!=null){
+                    final LatLng positionMarker = new LatLng(sportevent.getCoordinate().get(0),sportevent.getCoordinate().get(1));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionMarker,12));
+                    mMap.addMarker(new MarkerOptions().position(positionMarker).title(sportevent.getEventname()));
+                }
+                else
+                {
+                    if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        mMap.setMyLocationEnabled(true);
+                        mFusedLocationProviderClient.getLastLocation()
+                                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        // Got last known location. In some rare situations this can be null.
+                                        if (location != null) {
+                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12));
+                                        }
+                                    }
+                                });
+                    }
+                }
                 rendering(sportevent,iduser,idevento);
             }
             @Override
@@ -243,7 +337,6 @@ public class EventsingoloFragment extends Fragment {
     }
 
     public void listUserEvent(ArrayList<User> userList){
-
         LinearLayoutManager layoutManager= new LinearLayoutManager(getActivity().getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
         RecyclerView mRecyclerView = getActivity().findViewById(R.id.recyclerviewusers);
         RVAdapterUser rvadapteruser=new RVAdapterUser(userList);
@@ -251,39 +344,9 @@ public class EventsingoloFragment extends Fragment {
         mRecyclerView.setAdapter(rvadapteruser);
     }
 
+    //@Override
+   // public void OnBackPressed() {
+
+      //  Navigation.navigate().findNavController(R.id.action_navigation_eventsingolo_to_navigation_events);
+    //}
 }
-
-/*
-                                storageRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-
-                                    @Override
-                                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                        System.out.println("Tutto con successo per l'utente: "+user.getEmail());
-                                        Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                                        System.out.println(localFile.getAbsolutePath());
-                                        user.setBitmap(bitmap);
-                                        System.out.println(bitmap);
-                                        System.out.println("Aggiungo utente: "+user.getEmail());
-                                        partecipantiObj.add(user);
-                                        //++i;
-                                        //if(i==dataSnapshot.getChildrenCount()) {
-                                        if(partecipantiObj.size()==partecipanti.size()) {
-                                            System.out.println("Sottometto lista");
-                                            listUserEvent(partecipantiObj);
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        System.out.println("debug here");
-                                    }
-                                });
-
-                                                                //storageRef.child(singleSnapshot.getKey()+".png");
-                                //storageRef.child("uploads/1582456976096.jpg");
-                               // System.out.println("url donwload"+storageRef.get);
-/*                                Glide.with(getActivity())
-                                        .load(user.getPhotoUrl())
-                                        .into(img_Profilo);
-                                         */
-//final File localFile = File.createTempFile("images", "png");

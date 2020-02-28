@@ -1,15 +1,13 @@
 package com.example.is2.javaclass;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @IgnoreExtraProperties
 public class SportEvent {
 
+    private String key;
     private String eventdate;
     private String eventhour;
     private String eventname;
@@ -19,24 +17,23 @@ public class SportEvent {
     private String eventprice;
     private String eventsport;
     private ArrayList<String> eventnumberofplayers;
-    private String key;
+    private ArrayList<Double> coordinate;
 
     public SportEvent(){
 
-
     }
 
-    public SportEvent(String eventdate,String eventhour,String eventname,String eventowner,String eventplace,String eventplayersnumber,String eventprice,String eventsport,ArrayList<String> eventnumberofplayers, String key){
-        this.eventdate=eventdate;
-        this.eventhour=eventhour;
-        this.eventname=eventname;
-        this.eventowner=eventowner;
-        this.eventplace=eventplace;
-        this.eventprice=eventprice;
-        this.eventsport=eventsport;
-        this.eventplayersnumber=eventplayersnumber;
-        this.eventnumberofplayers=eventnumberofplayers;
-        this.key = key;
+    public ArrayList<Double> getCoordinate() {
+        if (coordinate != null)
+            return coordinate;
+        ArrayList<Double> notPresent = new ArrayList<Double>();
+        notPresent.add(null);
+        notPresent.add(null);
+        return notPresent;
+    }
+
+    public void setCoordinate(ArrayList<Double> coordinate) {
+        this.coordinate = coordinate;
     }
 
     public String getEventdate() {
@@ -122,5 +119,4 @@ public class SportEvent {
             return eventnumberofplayers.size();
         return 0;
     }
-
 }
