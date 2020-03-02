@@ -99,10 +99,10 @@ public class EventsingoloFragment extends Fragment {
         TextView sportevent_price = getActivity().findViewById(R.id.single_sportevent_price);
         sportevent_price.setText(" Costo: " + prezzo + "€");
 
-        TextView sportevent_numeropartecipanti = getActivity().findViewById(R.id.single_sportevent_numeropartecipanti);
+        TextView sportevent_numeropartecipanti = getView().findViewById(R.id.single_sportevent_numeropartecipanti);
         sportevent_numeropartecipanti.setText(numbercurrentpartecipanti + "/" + numbermaxpartecipanti);
 
-        ImageView sportevent_immagine = getActivity().findViewById(R.id.single_sportevent_immagine);
+        ImageView sportevent_immagine = getView().findViewById(R.id.single_sportevent_immagine);
         switch (sport) {
             case "Jogging":
                 sportevent_immagine.setImageResource(R.drawable.ic_jogging);
