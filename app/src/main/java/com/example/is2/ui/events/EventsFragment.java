@@ -189,8 +189,8 @@ public class EventsFragment extends Fragment {
             System.out.println("Data_cast: "+data_cast.getTime()+" Currenttime:"+current.getTime());
             if( data_cast.getTime() >= current.getTime() )
                 listaeventiok.add(s);
-
         }
+        
         listaeventi.clear();
         listaeventi.addAll(listaeventiok);
     }
