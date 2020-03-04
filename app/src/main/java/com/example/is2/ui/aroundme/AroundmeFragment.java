@@ -42,6 +42,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 public class AroundmeFragment extends Fragment implements OnMapReadyCallback
@@ -59,12 +64,6 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        // Construct a GeoDataClient.
-        //mGeoDataClient = Places.getGeoDataClient(this, null);
-
-        // Construct a PlaceDetectionClient.
-        //mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
@@ -161,9 +160,9 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
                 for(DataSnapshot ds: dataSnapshot.getChildren()) {
                         //System.out.println("DS"+ds);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
-                        if(sportevent.getCoordinate().get(0)!=null && sportevent.getCoordinate().get(1)!=null) {
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(sportevent.getCoordinate().get(0), sportevent.getCoordinate().get(1))).title(sportevent.getEventname()));
-                        }
+                        if(sportevent.getCoordinate().get(0)!=null && sportevent.getCoordinate().get(1)!=null)
+                            if(dataelemmagdatacurr(sportevent))
+                                mMap.addMarker(new MarkerOptions().position(new LatLng(sportevent.getCoordinate().get(0), sportevent.getCoordinate().get(1))).title(sportevent.getEventname()));
                 }
             }
 
@@ -174,4 +173,23 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
         });
     }
 
+    public boolean dataelemmagdatacurr(SportEvent sportEvent){
+        try {
+            DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+            String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            Date current = format.parse(currentDate);
+
+            String data_event = sportEvent.getEventdate();
+            Date data_cast = format.parse(data_event);
+
+            System.out.println("Data_cast: "+data_cast.getTime()+" Currenttime:"+current.getTime());
+
+            return data_cast.getTime() >= current.getTime();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
