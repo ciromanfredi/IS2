@@ -190,9 +190,10 @@ public class EventsFragment extends Fragment {
             if( data_cast.getTime() >= current.getTime() )
                 listaeventiok.add(s);
         }
-        
+
         listaeventi.clear();
         listaeventi.addAll(listaeventiok);
+        
     }
 
 }
