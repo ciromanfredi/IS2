@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
     public void  checkautenticazione(FirebaseUser account){
         if(account != null){
             //Toast.makeText(this,"Loggato con successo",Toast.LENGTH_LONG).show();
-            //startActivity(new Intent(this,MainActivity.class));
+            startActivity(new Intent(this,MainActivity.class));
         }else {
             //Toast.makeText(this,"Non Loggato",Toast.LENGTH_LONG).show();
         }
