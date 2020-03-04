@@ -105,26 +105,7 @@ public class ProfileFragment extends Fragment {
         boolean mostra=(uidreq==userfire.getUid());
         System.out.println("uidreq "+uidreq+" mostra "+mostra);
 
-        img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
         btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
-        FirebaseStorage fs=FirebaseStorage.getInstance();
-        StorageReference sr= fs.getReference().child("uploads/"+uidreq+".jpeg");
-            sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(getActivity())
-                            .load(uri)
-                            .into(img_Profilo);
-                    System.out.println("getActivity"+getActivity()+" uri "+uri);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    System.out.println("[ProfileFragment] eccezione");
-                }
-            });
-
 
         if(mostra) {
             btn_change.setVisibility(VISIBLE);
@@ -168,11 +149,7 @@ public class ProfileFragment extends Fragment {
                 if(getArguments()!=null)
                     uidreq=getArguments().getString("uidreq");
 
-                boolean mostra=(uidreq==userfire.getUid());
-                System.out.println("uidreq "+uidreq+" mostra "+mostra);
-
                 img_Profilo = (ImageView)getActivity().findViewById(R.id.profile_picture);
-                btn_change = (Button)getActivity().findViewById(R.id.buttonChange);
                 FirebaseStorage fs=FirebaseStorage.getInstance();
                 StorageReference sr= fs.getReference().child("uploads/"+uidreq+".jpeg");
                 sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
