@@ -193,7 +193,7 @@ public class EventsFragment extends Fragment {
 
         listaeventi.clear();
         listaeventi.addAll(listaeventiok);
-        
+
     }
 
 }

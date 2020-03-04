@@ -56,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
             //Toast.makeText(this,"Loggato con successo",Toast.LENGTH_LONG).show();
             Intent intent=new Intent(this,MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
             startActivity(intent);
         }else {
             //Toast.makeText(this,"Non Loggato",Toast.LENGTH_LONG).show();
