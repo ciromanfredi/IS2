@@ -105,7 +105,7 @@ public class EventsFragment extends Fragment {
 
         list = new ArrayList<>();
 
-        sportEvents.addListenerForSingleValueEvent(new ValueEventListener() {
+        sportEvents.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //System.out.println("numero figli: " + dataSnapshot.getChildrenCount());
@@ -180,17 +180,19 @@ public class EventsFragment extends Fragment {
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
-        System.out.println("Data current   "+currentDate);
+        //System.out.println("Data current: "+currentDate+" Lista size: "+listaeventi.size());
         Date current = format.parse(currentDate);
-
-        for(int i=0; i<listaeventi.size();i++){
-            String data_lista = listaeventi.get(i).getEventdate();
-               Date data_cast = format.parse(data_lista);
-                if( data_cast.getTime() < current.getTime() ){
-                    listaeventi.remove(i);
-                }
+        ArrayList<SportEvent> listaeventiok=new ArrayList<SportEvent>();
+        for(SportEvent s : listaeventi){
+            String data_lista = s.getEventdate();
+            Date data_cast = format.parse(data_lista);
+            System.out.println("Data_cast: "+data_cast.getTime()+" Currenttime:"+current.getTime());
+            if( data_cast.getTime() >= current.getTime() )
+                listaeventiok.add(s);
 
         }
+        listaeventi.clear();
+        listaeventi.addAll(listaeventiok);
     }
 
 }
