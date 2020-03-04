@@ -91,7 +91,7 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
             // App doesn't have access to the device's location at all. Make full request
             // for permission.
             System.out.println("Non ho il permesso per fine location");
-            requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
         return mView;
@@ -109,18 +109,7 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
                 if (grantResults.length > 0) {//System.out.println("DEBUG2");
                     if(grantResults[0] == PackageManager.PERMISSION_GRANTED){//System.out.println("DEBUG3");
                         permissionAccessFineLocationApproved = true;
-                        mMap.setMyLocationEnabled(true);
-                        mFusedLocationProviderClient.getLastLocation()
-                                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                                    @Override
-                                    public void onSuccess(Location location) {
-                                        // Got last known location. In some rare situations this can be null.
-                                        if (location != null) {
-                                            // Logic to handle location object
-                                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
-                                        }
-                                    }
-                                });
+                        enablelocal();
                     }
                 }
                 break;
@@ -139,18 +128,7 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
         mMap = googleMap;
 
         if(permissionAccessFineLocationApproved==true){
-            mMap.setMyLocationEnabled(true);
-            mFusedLocationProviderClient.getLastLocation()
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
-                            }
-                        }
-                    });
+            enablelocal();
         }
 
         FirebaseDatabase.getInstance().getReference("SportEvents").addListenerForSingleValueEvent(new ValueEventListener(){
@@ -192,4 +170,20 @@ public class AroundmeFragment extends Fragment implements OnMapReadyCallback
         }
         return true;
     }
+
+    public void enablelocal(){
+        mMap.setMyLocationEnabled(true);
+        mFusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),12));
+                        }
+                    }
+                });
+    }
+
 }
