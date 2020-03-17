@@ -6,7 +6,7 @@ name: Progetto IS2 workflow
 # events but only for the master branch
 on:
   push:
-    branches: [ masterFinale ]
+    branches: [ master ]
 
 env:
   BUILD_TOOLS_VERSION: 29.0.3
