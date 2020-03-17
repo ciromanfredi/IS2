@@ -208,7 +208,7 @@ public class AddEventActivity extends AppCompatActivity {
                 partecipanti.add(mAuth.getCurrentUser().getUid());
                 mDatabase.child("SportEvents").child(key).child("eventdate").setValue(data);
                 mDatabase.child("SportEvents").child(key).child("eventhour").setValue(time);
-                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo+","+citta);
+                mDatabase.child("SportEvents").child(key).child("eventplace").setValue(indirizzo+", "+citta);
                 mDatabase.child("SportEvents").child(key).child("eventsport").setValue(tipoEvento);
                 mDatabase.child("SportEvents").child(key).child("eventname").setValue(titolo);
                 mDatabase.child("SportEvents").child(key).child("eventowner").setValue(mAuth.getCurrentUser().getUid());

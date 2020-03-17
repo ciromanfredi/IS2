@@ -118,18 +118,22 @@ public class EventsFragment extends Fragment {
                         //System.out.println("LISTA EVENTI" + ListaEventi);
                         SportEvent sportevent = ds.getValue(SportEvent.class);
                         sportevent.setKey(key);
-                        if ((getActivity().getIntent().getStringArrayListExtra("preferenze") != null)) {
-                            preferenze = getActivity().getIntent().getStringArrayListExtra("preferenze");
-                            if (!preferenze.isEmpty()) {
-                                for (int i = 0; i < preferenze.size(); i++) {
-                                    if (ListaEventi.containsValue(preferenze.get(i))) {
-                                        list.add(sportevent);
+                        try{
+                            if ((getActivity().getIntent().getStringArrayListExtra("preferenze") != null)) {
+                                preferenze = getActivity().getIntent().getStringArrayListExtra("preferenze");
+                                if (!preferenze.isEmpty()) {
+                                    for (int i = 0; i < preferenze.size(); i++) {
+                                        if (ListaEventi.containsValue(preferenze.get(i))) {
+                                            list.add(sportevent);
+                                        }
                                     }
+                                } else {
+                                    list.add(sportevent);
                                 }
                             } else {
                                 list.add(sportevent);
                             }
-                        } else {
+                        }catch (NullPointerException nullpointer){
                             list.add(sportevent);
                         }
                     }
@@ -186,7 +190,7 @@ public class EventsFragment extends Fragment {
         for(SportEvent s : listaeventi){
             String data_lista = s.getEventdate();
             Date data_cast = format.parse(data_lista);
-            System.out.println("Data_cast: "+data_cast.getTime()+" Currenttime:"+current.getTime());
+            //System.out.println("Data_cast: "+data_cast.getTime()+" Currenttime:"+current.getTime());
             if( data_cast.getTime() >= current.getTime() )
                 listaeventiok.add(s);
         }
