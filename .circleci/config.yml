@@ -1,0 +1,55 @@
+version: 2
+jobs:
+  build:
+
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-28-alpha
+
+    environment:
+      JVM_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      #      - run:
+      #         name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
+      #         command: sudo chmod +x ./gradlew
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Build debug APK and release APK
+          command: |
+            ./gradlew :app:assembleDebug
+            ./gradlew :app:assembleDebugAndroidTest
+      - run:
+          name: Store Google Service Account
+          command: echo $GOOGLE_AUTH > ${HOME}/gcloud-service-key.json
+      - run:
+          name: Authorize gcloud and set config defaults
+          command: |
+            sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+            sudo gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+      - run:
+          name: Running Robo Test
+          command: >
+            sudo gcloud firebase test android run \
+               --type robo \
+               --app ${HOME}/code/app/build/outputs/apk/debug/app-debug.apk \
+               --device model=Pixel2,version=26,locale=en,orientation=portrait  \
+               --timeout 90s
+      - run:
+          name: Running Instrumentation Test
+          command: >
+            sudo gcloud firebase test android run \
+              --type instrumentation \
+              --app ${HOME}/code/app/build/outputs/apk/debug/app-debug.apk \
+              --test ${HOME}/code/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+              --device model=Pixel2,version=26,locale=en,orientation=portrait  \
+              --timeout 90s
